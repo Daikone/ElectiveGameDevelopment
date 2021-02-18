@@ -8,7 +8,13 @@ AnimatorController:
   m_PrefabAsset: {fileID: 0}
   m_Name: Human States
   serializedVersion: 5
-  m_AnimatorParameters: []
+  m_AnimatorParameters:
+  - m_Name: New Int
+    m_Type: 3
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -36,6 +42,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   randomMovementSpan: 20
   randomMovementChance: 5
+  DoorLayerCheck:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1107 &5335054550896250551
 AnimatorStateMachine:
   serializedVersion: 5

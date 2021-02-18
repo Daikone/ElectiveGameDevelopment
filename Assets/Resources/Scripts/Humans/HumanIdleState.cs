@@ -6,11 +6,15 @@ using UnityEngine.UIElements;
 public class HumanIdleState : StateMachineBehaviour
 {
     private Transform _transform;
-    private Position _position;
+    
+
+    public static GameObject[] DoorsInSight;
     
     
     public float randomMovementSpan;
     public float randomMovementChance;
+
+    public LayerMask DoorLayerCheck;
     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -21,7 +25,8 @@ public class HumanIdleState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        /*
+        //adds randomness to direction 
         if (Random.Range(0, 100) <= randomMovementChance)
         {
             _transform.forward += new Vector3(Random.Range(-randomMovementSpan, randomMovementSpan), 0, Random.Range(-randomMovementSpan, randomMovementSpan)) * Time.deltaTime;
@@ -37,10 +42,25 @@ public class HumanIdleState : StateMachineBehaviour
             
         }
         
+        //movement
         _transform.position += _transform.forward * (5f * Time.deltaTime);
+        
         //anti fly away
         _transform.localEulerAngles = new Vector3(0f,_transform.localEulerAngles.y,0f);
-        //animator.transform.position = new Vector3(animator.transform.position.x, 2f, animator.transform.position.z);
+        */
+        
+        //Doors
+        
+        Collider[] DoortColliders = Physics.OverlapSphere(_transform.position, 20, DoorLayerCheck );
+        foreach (var DoorCollider in DoortColliders)
+        {
+            RaycastHit hit2 = new RaycastHit();
+            
+            if (Physics.Linecast(_transform.position, DoorCollider.transform.position, out hit2) && hit2.collider.gameObject.CompareTag("Door"))
+            {
+                Debug.Log(hit2.collider.gameObject);
+            }
+        }
 
     }
     
