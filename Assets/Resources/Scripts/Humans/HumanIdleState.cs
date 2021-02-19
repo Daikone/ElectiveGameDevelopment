@@ -10,8 +10,7 @@ public class HumanIdleState : StateMachineBehaviour
 
 
     public static List<GameObject> DoorsInSight = new List<GameObject>();
-    
-    
+    private GameObject closestDoor;
     
     public float randomMovementSpan;
     public float randomMovementChance;
@@ -27,7 +26,7 @@ public class HumanIdleState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        /*
+        
         //adds randomness to direction 
         if (Random.Range(0, 100) <= randomMovementChance)
         {
@@ -36,12 +35,9 @@ public class HumanIdleState : StateMachineBehaviour
         
         
         //Checks for collisions
-        RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out hit, 1))
+        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1))
         {
-            
             _transform.forward = Vector3.Reflect(_transform.forward, hit.normal);
-            
         }
         
         //movement
@@ -49,41 +45,62 @@ public class HumanIdleState : StateMachineBehaviour
         
         //anti fly away
         _transform.localEulerAngles = new Vector3(0f,_transform.localEulerAngles.y,0f);
-        */
+        
+        
         
         //Doors
-        
-        Collider[] DoortColliders = Physics.OverlapSphere(_transform.position, 20, DoorLayerCheck );
-        foreach (var DoorCollider in DoortColliders)
+        Collider[] doorColliders = Physics.OverlapSphere(_transform.position, 20, DoorLayerCheck );
+        foreach (var doorCollider in doorColliders)
         {
-            RaycastHit hit2 = new RaycastHit();
-           
-
+            RaycastHit hit2;
+            
             //Calculates offset relative to the pivot of the door 
-            Vector3 DoorLineTarget = (DoorCollider.transform.position + new Vector3(0, 1, 0)) +
-                                     DoorCollider.transform.right.normalized;
-
+            Vector3 doorLineTarget = (doorCollider.transform.position + new Vector3(0, 1, 0)) + doorCollider.transform.right.normalized;
+            
+            
             //Checks if door is in sight
-            Physics.Linecast(_transform.position, DoorLineTarget, out hit2);
-            Debug.DrawLine(_transform.position, DoorLineTarget);
-            
-            GameObject HitObject = hit2.collider.gameObject;
-            
-            if ( HitObject.CompareTag("Door") && !DoorsInSight.Contains(DoorCollider.gameObject))
+            if (Physics.Linecast(_transform.position, doorLineTarget, out hit2))
             {
-                Debug.Log("added");
-                DoorsInSight.Add(DoorCollider.gameObject);
-            }
+                GameObject hitObject = hit2.collider.gameObject;
+                Debug.DrawLine(_transform.position, doorLineTarget);
 
-            //removes door from list if out of sight
-             else if (DoorsInSight.Contains(DoorCollider.gameObject) && !HitObject.CompareTag("Door"))
-            {
-                Debug.Log("remove");
-               DoorsInSight.Remove(DoorCollider.gameObject);
+                //adds door to list 
+                if (DoorsInSight != null)
+                {
+                    if ( hitObject.CompareTag("Door") && !DoorsInSight.Contains(doorCollider.gameObject))
+                    {
+                        DoorsInSight.Add(doorCollider.gameObject);
+                    }
+
+                    //removes door from list if out of sight
+                    else if (DoorsInSight.Contains(doorCollider.gameObject) && !hitObject.CompareTag("Door"))
+                    {
+                        DoorsInSight.Remove(doorCollider.gameObject);
+                    }
+                }
             }
-            
-            
         }
+        
+        
+        //checking fo rthe closest door in sight
+        if (DoorsInSight == null) return;
+        {
+            float closestDistance = Mathf.Infinity;
+            foreach (var Door in DoorsInSight)
+            {
+                float distance = Vector3.Distance(_transform.position, Door.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDoor = Door;
+                    closestDistance = distance;
+                }
+            }
+            //Calculates offset relative to the pivot of the door 
+            Vector3 doorLineTarget = (closestDoor.transform.position + new Vector3(0, 1, 0)) + closestDoor.transform.right.normalized;
+                    
+            Debug.DrawLine(_transform.position, doorLineTarget, Color.red);
+        }
+
     }
     
 
