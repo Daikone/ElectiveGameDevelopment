@@ -16,6 +16,13 @@ public class HumanIdleState : StateMachineBehaviour
     public float randomMovementChance;
 
     public LayerMask DoorLayerCheck;
+
+    /*calculates the offset relative to the position of the door*/
+    private Vector3 calculateDoorOffset( GameObject DoorPosition)
+    {
+        Vector3 DoorOffset = (DoorPosition.transform.position + new Vector3(0, 1, 0)) + DoorPosition.transform.right.normalized;
+        return DoorOffset;
+    }
     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -53,16 +60,12 @@ public class HumanIdleState : StateMachineBehaviour
         foreach (var doorCollider in doorColliders)
         {
             RaycastHit hit2;
-            
-            //Calculates offset relative to the pivot of the door 
-            Vector3 doorLineTarget = (doorCollider.transform.position + new Vector3(0, 1, 0)) + doorCollider.transform.right.normalized;
-            
-            
+           
             //Checks if door is in sight
-            if (Physics.Linecast(_transform.position, doorLineTarget, out hit2))
+            if (Physics.Linecast(_transform.position, calculateDoorOffset(doorCollider.gameObject), out hit2))
             {
                 GameObject hitObject = hit2.collider.gameObject;
-                Debug.DrawLine(_transform.position, doorLineTarget);
+                Debug.DrawLine(_transform.position, calculateDoorOffset(doorCollider.gameObject));
 
                 //adds door to list 
                 if (DoorsInSight != null)
@@ -70,6 +73,7 @@ public class HumanIdleState : StateMachineBehaviour
                     if ( hitObject.CompareTag("Door") && !DoorsInSight.Contains(doorCollider.gameObject))
                     {
                         DoorsInSight.Add(doorCollider.gameObject);
+                        
                     }
 
                     //removes door from list if out of sight
@@ -94,6 +98,7 @@ public class HumanIdleState : StateMachineBehaviour
                     closestDoor = Door;
                     closestDistance = distance;
                 }
+                
             }
             //Calculates offset relative to the pivot of the door 
             Vector3 doorLineTarget = (closestDoor.transform.position + new Vector3(0, 1, 0)) + closestDoor.transform.right.normalized;
