@@ -6,9 +6,11 @@ using UnityEngine.UIElements;
 public class HumanIdleState : StateMachineBehaviour
 {
     private Transform _transform;
-    
 
-    public static GameObject[] DoorsInSight;
+
+
+    public static List<GameObject> DoorsInSight = new List<GameObject>();
+    
     
     
     public float randomMovementSpan;
@@ -55,13 +57,33 @@ public class HumanIdleState : StateMachineBehaviour
         foreach (var DoorCollider in DoortColliders)
         {
             RaycastHit hit2 = new RaycastHit();
-            
-            if (Physics.Linecast(_transform.position, DoorCollider.transform.position, out hit2) && hit2.collider.gameObject.CompareTag("Door"))
-            {
-                Debug.Log(hit2.collider.gameObject);
-            }
-        }
+           
 
+            //Calculates offset relative to the pivot of the door 
+            Vector3 DoorLineTarget = (DoorCollider.transform.position + new Vector3(0, 1, 0)) +
+                                     DoorCollider.transform.right.normalized;
+
+            //Checks if door is in sight
+            Physics.Linecast(_transform.position, DoorLineTarget, out hit2);
+            Debug.DrawLine(_transform.position, DoorLineTarget);
+            
+            GameObject HitObject = hit2.collider.gameObject;
+            
+            if ( HitObject.CompareTag("Door") && !DoorsInSight.Contains(DoorCollider.gameObject))
+            {
+                Debug.Log("added");
+                DoorsInSight.Add(DoorCollider.gameObject);
+            }
+
+            //removes door from list if out of sight
+             else if (DoorsInSight.Contains(DoorCollider.gameObject) && !HitObject.CompareTag("Door"))
+            {
+                Debug.Log("remove");
+               DoorsInSight.Remove(DoorCollider.gameObject);
+            }
+            
+            
+        }
     }
     
 
