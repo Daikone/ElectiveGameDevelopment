@@ -7,21 +7,85 @@ public class HumanIdleState : StateMachineBehaviour
 {
     private Transform _transform;
 
-
-
-    public static List<GameObject> DoorsInSight = new List<GameObject>();
+    private List<GameObject> DoorsInSight = new List<GameObject>();
+    private List<GameObject> GhostsInSight = new List<GameObject>();
     private GameObject closestDoor;
+    private GameObject closestGhost;
     
     public float randomMovementSpan;
     public float randomMovementChance;
 
     public LayerMask DoorLayerCheck;
+    public LayerMask GhostLayerCheck;
 
     /*calculates the offset relative to the position of the door*/
-    private Vector3 calculateDoorOffset( GameObject DoorPosition)
+    private Vector3 calculateDoorOffset( GameObject door)
     {
-        Vector3 DoorOffset = (DoorPosition.transform.position + new Vector3(0, 1, 0)) + DoorPosition.transform.right.normalized;
+        Vector3 DoorOffset = (door.transform.position + new Vector3(0, 1, 0)) + door.transform.right.normalized;
         return DoorOffset;
+    }
+    List<GameObject> CheckCloseObjectsInSight(float radius, LayerMask layerMask, string tag)
+    {
+
+        List<GameObject> objectsInRange = new List<GameObject>();
+        Collider[] Colliders = Physics.OverlapSphere(_transform.position, radius, layerMask );
+        foreach (var Collider in Colliders)
+        {
+            //Checks if door is in sight
+            Vector3 lineTarget = new Vector3();
+            if (layerMask == DoorLayerCheck)
+            {
+                lineTarget = calculateDoorOffset(Collider.gameObject);
+            }
+            else
+            {
+                lineTarget = Collider.gameObject.transform.position;
+            }
+            
+            
+            if (Physics.Linecast(_transform.position, lineTarget, out var hit2))
+            {
+                GameObject hitObject = hit2.collider.gameObject;
+                Debug.DrawLine(_transform.position, lineTarget);
+                
+                //adds to list 
+                if (objectsInRange != null)
+                {
+                    if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(Collider.gameObject))
+                    {
+                        objectsInRange.Add(Collider.gameObject);
+                        
+                    }
+
+                    //removes door from list if out of sight
+                    else if (objectsInRange.Contains(Collider.gameObject) && !hitObject.CompareTag(tag))
+                    {
+                        objectsInRange.Remove(Collider.gameObject);
+                    }
+                }
+            }
+        }
+
+        return objectsInRange;
+    }
+    GameObject ClosestObjectInList(List<GameObject> list)
+    {
+
+        int objPos = new int();
+        float closestDistance = Mathf.Infinity;
+        
+        foreach (var obj in list)
+        {
+            float distance = Vector3.Distance(_transform.position, obj.transform.position);
+            if (distance < closestDistance)
+            {
+                objPos = list.FindIndex(a => a.gameObject == obj);
+                closestDistance = distance;
+            }
+        }
+        
+        return list[objPos];
+
     }
     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -33,7 +97,7 @@ public class HumanIdleState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+
         //adds randomness to direction 
         if (Random.Range(0, 100) <= randomMovementChance)
         {
@@ -55,56 +119,27 @@ public class HumanIdleState : StateMachineBehaviour
         
         
         
-        //Doors
-        Collider[] doorColliders = Physics.OverlapSphere(_transform.position, 20, DoorLayerCheck );
-        foreach (var doorCollider in doorColliders)
+        
+        
+        DoorsInSight = CheckCloseObjectsInSight(20f, DoorLayerCheck, "Door");
+        GhostsInSight = CheckCloseObjectsInSight(20f, GhostLayerCheck, "Ghost");
+        
+        if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
-            RaycastHit hit2;
-           
-            //Checks if door is in sight
-            if (Physics.Linecast(_transform.position, calculateDoorOffset(doorCollider.gameObject), out hit2))
-            {
-                GameObject hitObject = hit2.collider.gameObject;
-                Debug.DrawLine(_transform.position, calculateDoorOffset(doorCollider.gameObject));
-
-                //adds door to list 
-                if (DoorsInSight != null)
-                {
-                    if ( hitObject.CompareTag("Door") && !DoorsInSight.Contains(doorCollider.gameObject))
-                    {
-                        DoorsInSight.Add(doorCollider.gameObject);
-                        
-                    }
-
-                    //removes door from list if out of sight
-                    else if (DoorsInSight.Contains(doorCollider.gameObject) && !hitObject.CompareTag("Door"))
-                    {
-                        DoorsInSight.Remove(doorCollider.gameObject);
-                    }
-                }
-            }
+            closestDoor = ClosestObjectInList(DoorsInSight);
+            Debug.DrawLine(_transform.position, calculateDoorOffset(closestDoor), Color.blue);
+            
+        }
+        
+        if (GhostsInSight!= null && GhostsInSight.Count > 0)
+        {
+            closestGhost = ClosestObjectInList(GhostsInSight);
+            Debug.DrawLine(_transform.position, closestGhost.transform.position, Color.green);
+            
         }
         
         
-        //checking fo rthe closest door in sight
-        if (DoorsInSight == null) return;
-        {
-            float closestDistance = Mathf.Infinity;
-            foreach (var Door in DoorsInSight)
-            {
-                float distance = Vector3.Distance(_transform.position, Door.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDoor = Door;
-                    closestDistance = distance;
-                }
-                
-            }
-            //Calculates offset relative to the pivot of the door 
-            Vector3 doorLineTarget = (closestDoor.transform.position + new Vector3(0, 1, 0)) + closestDoor.transform.right.normalized;
-                    
-            Debug.DrawLine(_transform.position, doorLineTarget, Color.red);
-        }
+        
 
     }
     
