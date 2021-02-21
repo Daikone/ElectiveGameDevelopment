@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 7695584857005667822}
   - component: {fileID: 7695584857005667823}
   - component: {fileID: 4243098770146186953}
+  - component: {fileID: 6740407505426860339}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Human
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -114,3 +115,16 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!135 &6740407505426860339
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7695584857005667817}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.3662841
+  m_Center: {x: -0.19214733, y: 0.21343035, z: -0.0000000046986357}
