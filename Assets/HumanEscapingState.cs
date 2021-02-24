@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HumanEscapingState : BaseAIBehaviour
 {
@@ -9,55 +10,41 @@ public class HumanEscapingState : BaseAIBehaviour
     private Transform _transform;
     public float ghostAvoidanceDistance;
     public float speed;
+    private NavMeshAgent _navAgent;
 
     private GameObject escapeDoor;
-    private bool isCloseToGhost;
     
+    private static readonly int SeesGhost = Animator.StringToHash("SeesGhost");
+
     //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         Behaviour = animator.GetBehaviour<HumanGeneralBehaviour>();
         _transform = animator.transform;
         escapeDoor = Behaviour.closestDoor;
-        isCloseToGhost = false;
+        
+        _navAgent = animator.gameObject.GetComponent<NavMeshAgent>();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     { 
         
-       Vector3 ghostAdjust = new Vector3();
-       foreach (var ghost in Behaviour.GhostsInSight)
-       {
-           if (Vector3.Distance(_transform.position, ghost.transform.position) < ghostAvoidanceDistance)
-           {
-               ghostAdjust += _transform.position - ghost.transform.position;
-               if (isCloseToGhost == false && Behaviour.DoorsInSight.Count > 0)
-               {
-                   int escapeDoorIndex = Behaviour.DoorsInSight.FindIndex(a => a.gameObject == escapeDoor);
-                   if (escapeDoorIndex == Behaviour.DoorsInSight.Count -1)
-                   {
-                       escapeDoor = Behaviour.DoorsInSight.First();
-                   }
-                   else
-                   {
-                       escapeDoor = Behaviour.DoorsInSight[escapeDoorIndex + 1];
-                   }
-               }
-               isCloseToGhost = true;
-           }
-           else
-           {
-               isCloseToGhost = false;
-           }
-            
-       }
+       
+       
 
-       _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
-       _transform.forward += ghostAdjust;
+      // _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
+       //_transform.forward += ghostAdjust;
        
-       _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-       
+      // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
+      _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
+      
+      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
+      {
+          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
+          animator.SetBool("SeesGhost", false);
+      }
+      
     }
     
 

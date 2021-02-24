@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
@@ -8,7 +9,7 @@ public class HumanIdleState : BaseAIBehaviour
 {
     private Transform _transform;
     private HumanGeneralBehaviour Behaviour;
-
+    private NavMeshAgent _navAgent;
 
     public float randomMovementSpan;
     public float randomMovementChance;
@@ -21,13 +22,14 @@ public class HumanIdleState : BaseAIBehaviour
     {
         _transform = animator.transform;
         Behaviour = animator.GetBehaviour<HumanGeneralBehaviour>();
+        _navAgent = animator.gameObject.GetComponent<NavMeshAgent>();
 
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        _navAgent.ResetPath();
         
         //Movement
         //adds randomness to direction 
