@@ -22,6 +22,7 @@ public class HumanGeneralBehaviour : BaseAIBehaviour
     
     public LayerMask DoorLayerCheck;
     public LayerMask GhostLayerCheck;
+    
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -32,8 +33,8 @@ public class HumanGeneralBehaviour : BaseAIBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Detecting
-        DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, "Door");
-        GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, "Ghost");
+        DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, "Door", false );
+        GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, "Ghost", true);
         
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {

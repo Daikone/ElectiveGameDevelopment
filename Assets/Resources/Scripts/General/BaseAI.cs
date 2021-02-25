@@ -6,10 +6,13 @@ using UnityEngine.UI;
 public class BaseAIBehaviour : StateMachineBehaviour
 {
     
-    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, string tag)
+    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, string tag, bool ignoringGhostSphere)
     {
 
         List<GameObject> objectsInRange = new List<GameObject>();
+        LayerMask ignoreLayer;
+        ignoreLayer =~(1 << 10);
+        
         Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
         foreach (var collider in colliders)
         {
@@ -25,29 +28,57 @@ public class BaseAIBehaviour : StateMachineBehaviour
             {
                 lineTarget = collider.gameObject.transform.position;
             }
-            
-            
-            if (Physics.Linecast(self.transform.position, lineTarget, out var hit2))
-            {
-                GameObject hitObject = hit2.collider.gameObject;
-                Debug.DrawLine(self.transform.position, lineTarget);
-                
-                //adds to list 
-                if (objectsInRange != null)
-                {
-                    if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
-                    {
-                        objectsInRange.Add(collider.gameObject);
-                        
-                    }
 
-                    //removes door from list if out of sight
-                    else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+            if (ignoringGhostSphere)
+            {
+                if (Physics.Linecast(self.transform.position, lineTarget, out var hit2, ignoreLayer))
+                {
+                    GameObject hitObject = hit2.collider.gameObject;
+                    Debug.DrawLine(self.transform.position, lineTarget);
+                
+                    //adds to list 
+                    if (objectsInRange != null)
                     {
-                        objectsInRange.Remove(collider.gameObject);
+                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        {
+                            objectsInRange.Add(collider.gameObject);
+                        
+                        }
+
+                        //removes door from list if out of sight
+                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+                        {
+                            objectsInRange.Remove(collider.gameObject);
+                        }
                     }
                 }
             }
+            else if(!ignoringGhostSphere)
+            {
+                if (Physics.Linecast(self.transform.position, lineTarget, out var hit2))
+                {
+                    GameObject hitObject = hit2.collider.gameObject;
+                    Debug.DrawLine(self.transform.position, lineTarget);
+                    
+                
+                    //adds to list 
+                    if (objectsInRange != null)
+                    {
+                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        {
+                            objectsInRange.Add(collider.gameObject);
+                        
+                        }
+
+                        //removes door from list if out of sight
+                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+                        {
+                            objectsInRange.Remove(collider.gameObject);
+                        }
+                    }
+                }
+            }
+            
         }
         return objectsInRange;
     }
