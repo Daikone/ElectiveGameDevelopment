@@ -21,15 +21,13 @@ public class HumanEscapingState : BaseAIBehaviour
     {
         Behaviour = animator.GetBehaviour<HumanGeneralBehaviour>();
         _transform = animator.transform;
-        escapeDoor = Behaviour.closestDoor;
-        
         _navAgent = animator.gameObject.GetComponent<NavMeshAgent>();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     { 
-        
+        escapeDoor = Behaviour.closestDoor;
        
        
 
