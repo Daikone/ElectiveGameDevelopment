@@ -66,7 +66,7 @@ public class BaseGhostAI : MonoBehaviour
                     currentHuman = human.gameObject;
                     currentState = STATE.Hunting;
                 }
-                    
+                //remove and check overlap sphere instead of dot matrix    
             }
                 
         }
