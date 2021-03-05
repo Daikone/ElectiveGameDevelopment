@@ -5,7 +5,7 @@ using UnityEngine.AI;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
-public class HumanIdleState : BaseAIBehaviour
+public class HumanIdleState : BaseHumanBehaviour
 {
     private Transform _transform;
     private HumanGeneralBehaviour Behaviour;

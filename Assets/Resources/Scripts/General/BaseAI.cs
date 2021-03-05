@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BaseAIBehaviour : StateMachineBehaviour
+public class BaseHumanBehaviour : StateMachineBehaviour
 {
     
     protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, string tag, bool ignoringGhostSphere)
