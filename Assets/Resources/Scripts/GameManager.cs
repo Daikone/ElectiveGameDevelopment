@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     private const float MAXTIME = 65;
     private const float MAXPOINTS = 10;
 
+    public Room[] rooms;
+
     private void Start()
     {
         currentTime = MAXTIME;
