@@ -7,6 +7,7 @@ TagManager:
   - Door
   - Ghost
   - Human
+  - Pickup
   layers:
   - Default
   - TransparentFX
