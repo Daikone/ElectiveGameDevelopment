@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class HumanEscapingState : BaseAIBehaviour
+public class HumanEscapingState : BaseHumanBehaviour
 {
     private HumanGeneralBehaviour Behaviour;
     private Transform _transform;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class HumanGeneralBehaviour : BaseAIBehaviour
+public class HumanGeneralBehaviour : BaseHumanBehaviour
 {
     private Transform _transform;
     [HideInInspector]
