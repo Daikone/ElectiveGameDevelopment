@@ -13,6 +13,7 @@ public class BaseHumanBehaviour : StateMachineBehaviour
         LayerMask ignoreLayer;
         ignoreLayer =~(1 << 10);
         
+        
         Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
         foreach (var collider in colliders)
         {
