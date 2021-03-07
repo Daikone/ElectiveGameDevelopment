@@ -32,14 +32,15 @@ public class BaseGhostAI : MonoBehaviour
     /// <param name="self">GameObject from which the function should be executed </param>
     /// <param name="radius">Radius in which to check </param>
     /// <param name="layerMask">Layermask to only find objects on a certain layer, for example: doors </param>
-    /// <param name="tag">Tag of the objects you want to find, so same as for the layermask </param>
-    /// <param name="ignoringGhostSphere">Checks if you want to ignore the sphere around the ghosts for line casting </param>
-    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, string tag, bool ignoringGhostSphere)
+    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask)
     {
 
         List<GameObject> objectsInRange = new List<GameObject>();
         LayerMask ignoreLayer;
         ignoreLayer =~(1 << 10);
+
+        
+        
         
         Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
         foreach (var collider in colliders)
@@ -57,8 +58,7 @@ public class BaseGhostAI : MonoBehaviour
                 lineTarget = collider.gameObject.transform.position;
             }
 
-            if (ignoringGhostSphere)
-            {
+            
                 if (Physics.Linecast(self.transform.position, lineTarget, out var hit2, ignoreLayer))
                 {
                     GameObject hitObject = hit2.collider.gameObject;
@@ -67,45 +67,19 @@ public class BaseGhostAI : MonoBehaviour
                     //adds to list 
                     if (objectsInRange != null)
                     {
-                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        if ( hitObject == collider.gameObject && !objectsInRange.Contains(collider.gameObject))
                         {
                             objectsInRange.Add(collider.gameObject);
                         
                         }
 
                         //removes door from list if out of sight
-                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+                        else if (objectsInRange.Contains(collider.gameObject) && hitObject != collider.gameObject)
                         {
                             objectsInRange.Remove(collider.gameObject);
                         }
                     }
                 }
-            }
-            else if(!ignoringGhostSphere)
-            {
-                if (Physics.Linecast(self.transform.position, lineTarget, out var hit2))
-                {
-                    GameObject hitObject = hit2.collider.gameObject;
-                    Debug.DrawLine(self.transform.position, lineTarget);
-                    
-                
-                    //adds to list 
-                    if (objectsInRange != null)
-                    {
-                        if ( hitObject.layer == layerMask && !objectsInRange.Contains(collider.gameObject))
-                        {
-                            objectsInRange.Add(collider.gameObject);
-                        
-                        }
-
-                        //removes door from list if out of sight
-                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
-                        {
-                            objectsInRange.Remove(collider.gameObject);
-                        }
-                    }
-                }
-            }
             
         }
         return objectsInRange;
