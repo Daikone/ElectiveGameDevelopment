@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class BaseHumanBehaviour : StateMachineBehaviour
 {
     
-    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, string tag, bool ignoringGhostSphere)
+    protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, bool ignoringGhostSphere)
     {
 
         List<GameObject> objectsInRange = new List<GameObject>();
@@ -40,14 +40,14 @@ public class BaseHumanBehaviour : StateMachineBehaviour
                     //adds to list 
                     if (objectsInRange != null)
                     {
-                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        if ( hitObject == collider.gameObject && !objectsInRange.Contains(collider.gameObject))
                         {
                             objectsInRange.Add(collider.gameObject);
                         
                         }
 
                         //removes door from list if out of sight
-                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+                        else if (objectsInRange.Contains(collider.gameObject) && hitObject != collider.gameObject)
                         {
                             objectsInRange.Remove(collider.gameObject);
                         }
@@ -65,14 +65,14 @@ public class BaseHumanBehaviour : StateMachineBehaviour
                     //adds to list 
                     if (objectsInRange != null)
                     {
-                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        if ( hitObject == collider.gameObject && !objectsInRange.Contains(collider.gameObject))
                         {
                             objectsInRange.Add(collider.gameObject);
                         
                         }
 
                         //removes door from list if out of sight
-                        else if (objectsInRange.Contains(collider.gameObject) && !hitObject.CompareTag(tag))
+                        else if (objectsInRange.Contains(collider.gameObject) && hitObject != collider.gameObject)
                         {
                             objectsInRange.Remove(collider.gameObject);
                         }

@@ -92,7 +92,7 @@ public class BaseGhostAI : MonoBehaviour
                     //adds to list 
                     if (objectsInRange != null)
                     {
-                        if ( hitObject.CompareTag(tag) && !objectsInRange.Contains(collider.gameObject))
+                        if ( hitObject.layer == layerMask && !objectsInRange.Contains(collider.gameObject))
                         {
                             objectsInRange.Add(collider.gameObject);
                         
