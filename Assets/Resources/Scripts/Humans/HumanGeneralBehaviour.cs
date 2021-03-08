@@ -33,8 +33,8 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Detecting
-        DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, "Door", false );
-        GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, "Ghost", true);
+        DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, false );
+        GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, true);
         
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
