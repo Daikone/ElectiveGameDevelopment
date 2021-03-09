@@ -29,10 +29,11 @@ namespace HaniAISpace
         // Start is called before the first frame update
         void Start()
         {
+            speed = 3f;
+            agent.speed = speed;
             MovetoPoint("Hallway1");
             //currentRoom = ROOM.MainHall;
             //currentState = STATE.Idle;
-            agent.speed = speed;
        }
 
        // Update is called once per frame
@@ -51,6 +52,13 @@ namespace HaniAISpace
 
            //CheckHumanInfront();
            
+           /*if (Input.GetMouseButtonDown(0)) {
+               RaycastHit hit;
+                
+               if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
+                   agent.destination = hit.point;
+               }
+           }*/
         }
 
         void ChangeState()
@@ -67,6 +75,13 @@ namespace HaniAISpace
                 case 3: currentState = STATE.Idle;Debug.Log("idle");
                     break;
             }*/
+            if (Input.GetMouseButtonDown(0)) {
+                RaycastHit hit;
+                
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
+                    agent.destination = hit.point;
+                }
+            }
         }
 
         protected void RoamAround()
