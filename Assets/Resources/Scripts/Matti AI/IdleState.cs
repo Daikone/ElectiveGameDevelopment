@@ -8,11 +8,12 @@ namespace Resources.Scripts.Matti_AI
     public class IdleState : State
     {
         public ChaseState _chaseState;
-        public bool seesHuman = false;
+       
+        
         public override State RunCurrentState()
         {
-            Debug.Log("I'm idle");
-            if (seesHuman)
+           
+            if (ClosestHuman != null)
             {
                 return _chaseState;
             }

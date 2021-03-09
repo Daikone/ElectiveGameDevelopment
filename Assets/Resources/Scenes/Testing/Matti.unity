@@ -20978,6 +20978,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 945216368}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &952946768 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 717615101607930793, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+    type: 3}
+  m_PrefabInstance: {fileID: 3531946321903634153}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5985a28bc8b08469d852cac4a55a128f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &955525022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45734,6 +45746,31 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 717615101607930793, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+        type: 3}
+      propertyPath: currentState
+      value: 
+      objectReference: {fileID: 952946768}
+    - target: {fileID: 717615101607930793, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+        type: 3}
+      propertyPath: humanLayerCheck.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 2689376022191700216, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+        type: 3}
+      propertyPath: humanLayerCheck.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 2893816874844883063, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+        type: 3}
+      propertyPath: currentState
+      value: 
+      objectReference: {fileID: 952946768}
+    - target: {fileID: 2893816874844883063, guid: 197b860b1d13145f6bb6cdf0102f86cc,
+        type: 3}
+      propertyPath: humanLayerCheck.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 3531946320921857452, guid: 197b860b1d13145f6bb6cdf0102f86cc,
         type: 3}
       propertyPath: m_RootOrder
