@@ -8,22 +8,29 @@ namespace Resources.Scripts.Matti_AI
 {
     
     
-    public class  StateManager : BaseGhostAI
+    public class  StateMachine : BaseGhostAI
     {
-        private static State currentState;
-
-       
-       public LayerMask HumanLayerCheck;
-        private static List<GameObject> humansInSight = new List<GameObject>();
-
-        [HideInInspector] 
-        protected static GameObject ClosestHuman;
+        public  State _currentState;
+        public IdleState idleState;
+        public  ChaseState chaseState;
         
+       public LayerMask humanLayerCheck;
+       private  List<GameObject> humansInSight = new List<GameObject>();
+       
+       [HideInInspector]
+        public GameObject ClosestHuman;
+        
+
+
+        private void Start()
+        {
+            _currentState = idleState;
+        }
 
         private void Update()
         {
             RunStateMachine();
-            humansInSight = CheckCloseObjectsInSight(gameObject, 10f, HumanLayerCheck);
+            humansInSight = CheckCloseObjectsInSight(gameObject, 10f, humanLayerCheck);
             if (humansInSight.Count > 0)
             {
                 ClosestHuman = ClosestObjectInList(gameObject, humansInSight);
@@ -32,13 +39,11 @@ namespace Resources.Scripts.Matti_AI
             {
                 ClosestHuman = null;
             }
-            
-
         }
 
         private void RunStateMachine()
         {
-            State nextState = currentState?.RunCurrentState();
+            State nextState = _currentState?.RunCurrentState();
 
             if (nextState != null)
             {
@@ -48,8 +53,10 @@ namespace Resources.Scripts.Matti_AI
 
         private void SwitchToNextState(State nextState)
         {
-            currentState = nextState;
+            _currentState = nextState;
         }
+
+        
     }
     
 }

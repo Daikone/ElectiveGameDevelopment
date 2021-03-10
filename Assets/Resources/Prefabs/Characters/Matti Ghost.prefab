@@ -102,7 +102,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3531946320921857452}
-  - component: {fileID: 3531946320921857455}
+  - component: {fileID: 7743716075727608513}
+  - component: {fileID: 8312306480087460940}
+  - component: {fileID: 2542744892643404019}
   m_Layer: 9
   m_Name: Matti Ghost
   m_TagString: Ghost
@@ -127,7 +129,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &3531946320921857455
+--- !u!114 &7743716075727608513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3531946320921857453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a63489e03675944bca8b36d2279674eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  agent: {fileID: 8312306480087460940}
+  idleState: {fileID: 717615101607930793}
+  chaseState: {fileID: 2893816874844883063}
+  humanLayerCheck:
+    serializedVersion: 2
+    m_Bits: 2048
+--- !u!195 &8312306480087460940
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3531946320921857453}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!136 &2542744892643404019
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,9 +181,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1.5601759
+  m_Height: 1.1144598
   m_Direction: 1
-  m_Center: {x: 0, y: 0.28008795, z: 0}
+  m_Center: {x: 0, y: 0.5477692, z: 0}
 --- !u!1 &3531946321037256402
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,7 +224,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5971426631164557496}
-  - component: {fileID: 2689376022191700216}
   - component: {fileID: 717615101607930793}
   - component: {fileID: 2893816874844883063}
   m_Layer: 9
@@ -205,21 +247,6 @@ Transform:
   m_Father: {fileID: 3531946320921857452}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2689376022191700216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4336208502714745073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a63489e03675944bca8b36d2279674eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 0}
-  agent: {fileID: 0}
-  currentState: {fileID: 717615101607930793}
 --- !u!114 &717615101607930793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,9 +261,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
   agent: {fileID: 0}
-  currentState: {fileID: 0}
-  _chaseState: {fileID: 2893816874844883063}
-  seesHuman: 0
+  idleState: {fileID: 0}
+  chaseState: {fileID: 0}
+  humanLayerCheck:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2893816874844883063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +280,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
   agent: {fileID: 0}
-  currentState: {fileID: 0}
+  idleState: {fileID: 0}
+  chaseState: {fileID: 0}
+  humanLayerCheck:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &3531946321592155656
 PrefabInstance:
   m_ObjectHideFlags: 0

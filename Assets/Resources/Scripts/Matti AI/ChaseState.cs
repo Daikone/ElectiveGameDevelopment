@@ -11,7 +11,7 @@ namespace Resources.Scripts.Matti_AI
 
         public override State RunCurrentState()
         {
-            Debug.Log("I'm chasing");
+           
             return this;
         }
     }
