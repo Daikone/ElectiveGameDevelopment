@@ -1,21 +1,26 @@
 ﻿
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Resources.Scripts.Matti_AI
 {
     public class IdleState : State
     {
-        public ChaseState _chaseState;
-       
-        
+        private bool _initializing = false;
+        private StateMachine _stateMachine;
+
         public override State RunCurrentState()
         {
-           
+            if (!_initializing)
+            {
+                _stateMachine = getStateMachine();
+                _initializing = true;
+            }
+            
             if (ClosestHuman != null)
             {
-                return _chaseState;
+                Debug.Log(_stateMachine.chaseState);
+                return _stateMachine.chaseState;
             }
             else
             {
