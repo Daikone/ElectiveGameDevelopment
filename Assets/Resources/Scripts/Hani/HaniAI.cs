@@ -164,13 +164,13 @@ namespace HaniAISpace
             //i GUESS YOU CAN ONLY HAVE 1 power up at a time
         }
 
-        void OnCollisionEnter(Collider collider)
+        void OnCollisionEnter(Collision collider)
         {
-            if (collider.CompareTag("Ghost"))
+            if (collider.collider.CompareTag("Ghost"))
             {
                 if (currentAbility == ABILITY.SoulSteal)
                 {
-                    var otherAI = collider.GetComponent<HaniAI>(); // current ability will be in the baseghostAI
+                    var otherAI = collider.collider.GetComponent<HaniAI>(); // current ability will be in the baseghostAI
 
                     if (otherAI.currentAbility != ABILITY.SoulSteal)
                     {
