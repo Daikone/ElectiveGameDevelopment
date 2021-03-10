@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Enumerable = System.Linq.Enumerable;
 
 namespace HaniAISpace
 {
@@ -13,17 +15,20 @@ namespace HaniAISpace
         SoulDeposit,
         Scanning
     }
-
+    
+    public enum ROOM{ MainHall, Hallway1, TopRightRoom}
+    
+    public enum ABILITY{none, WallWalk, SoulSteal, Speedoost}
     public class HaniAI : BaseGhostAI
     {
 
-        private float rotationSpeed = 100f;
-        //private Transform[] rooms;
-
-        private Vector3 targetPosition; //unused
+        public List<Room> rooms;
+        
+        private float rotationSpeed = 1f;
         private GameObject currentHuman;
 
         private STATE currentState;
+        private ABILITY currentAbility;
         //protected ROOM currentRoom;
 
         // Start is called before the first frame update
@@ -31,34 +36,26 @@ namespace HaniAISpace
         {
             speed = 3f;
             agent.speed = speed;
-            MovetoPoint("Hallway1");
-            //currentRoom = ROOM.MainHall;
+            MovetoPoint(ROOM.MainHall);
+            currentAbility = ABILITY.none;
             //currentState = STATE.Idle;
-       }
+
+            //rooms = new List<Room>();
+        }
 
        // Update is called once per frame
        void Update()
        {
            if ( CheckHumanInfront()) // maybe only check when scouting or whatever so you can ignore them to deposit souls
                ChaseHuman();
-           /*else if (currentState == STATE.Idle)
+           else if (currentState == STATE.Idle)
            {
                //InvokeRepeating("ChangeState", 0f, 1);
                StartCoroutine(IdleLookAround());
                //IdleLookAround();
-           }*/
+           }
                 // might not need invoke repeat
            Debug.Log(currentState);
-
-           //CheckHumanInfront();
-           
-           /*if (Input.GetMouseButtonDown(0)) {
-               RaycastHit hit;
-                
-               if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
-                   agent.destination = hit.point;
-               }
-           }*/
         }
 
         void ChangeState()
@@ -75,13 +72,18 @@ namespace HaniAISpace
                 case 3: currentState = STATE.Idle;Debug.Log("idle");
                     break;
             }*/
-            if (Input.GetMouseButtonDown(0)) {
-                RaycastHit hit;
-                
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
-                    agent.destination = hit.point;
-                }
-            }
+        }
+        
+        private IEnumerator IdleLookAround()
+        {
+            transform.Rotate(0, rotationSpeed, 0);// this is still being called after
+
+            yield return new WaitForSeconds(1f);
+            transform.Rotate(0, -rotationSpeed, 0);
+
+            yield return new WaitForSeconds(.1f);
+            currentState = STATE.Hunting;// change to smething else
+            //ChangeState(); 
         }
 
         protected void RoamAround()
@@ -90,31 +92,21 @@ namespace HaniAISpace
             //maybe self written as well
         }
 
-        private IEnumerator IdleLookAround()
-        {
-            
-            transform.Rotate(0, Time.deltaTime * rotationSpeed, 0);
-
-            Debug.Log(Time.deltaTime);
-            yield return new WaitForSeconds(2f);
-
-            transform.Rotate(0, -Time.deltaTime * rotationSpeed, 0);
-
-            yield return new WaitForSeconds(2f);
-            yield return null;
-            //Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, -Time.deltaTime * rotationSpeed, 0), .5f);
-        }
         
-        public void MovetoPoint(string roomName)
+        
+        public void MovetoPoint(ROOM roomName)
         {
-            foreach (var room in gm.rooms)
+            string name = roomName.ToString();
+            
+            foreach (var room in rooms)
             {
-                if (room.name == roomName)
+                if (room.name == name)
                 {
                     agent.SetDestination(room.GetPos());
-                    //break;
+                    break;
                 }
             }
+            //Maybe needs a way to debug if the room exists
         }
         
         protected bool CheckHumanInfront()
@@ -160,29 +152,36 @@ namespace HaniAISpace
 
         private void Stealsouls()
         {
-            //ability us that has a coolDown
+            currentAbility = ABILITY.SoulSteal;
             //ability that disappears after one use
-            
+
             //collide with ghost to steal thier soul (animation with sound)
-                //if other ghost's current power up is GhostSteal
-                    //nothing happens so go back to idling or whatever you were doing do something else
-                //else
-                    //gain half their soul and change current power up to none
-            
+            //if other ghost's current power up is GhostSteal
+            //nothing happens so go back to idling or whatever you were doing do something else
+            //else
+            //gain half their soul and change current power up to none
+
             //i GUESS YOU CAN ONLY HAVE 1 power up at a time
         }
 
-        /*protected void UpdateTargetPosition(string roomName) // optional way of implememnting rooms
+        void OnCollisionEnter(Collider collider)
         {
-            switch (currentRoom)
+            if (collider.CompareTag("Ghost"))
             {
-            case ROOM.MainHall: targetPosition = gm.rooms[0].GetPos();
-                            break;
-            case ROOM.Hallway1: targetPosition = gm.rooms[1].GetPos();
-                            break;
-            default: break;
+                if (currentAbility == ABILITY.SoulSteal)
+                {
+                    var otherAI = collider.GetComponent<HaniAI>(); // current ability will be in the baseghostAI
+
+                    if (otherAI.currentAbility != ABILITY.SoulSteal)
+                    {
+                        carryingSouls += otherAI.carryingSouls; // Add to yor souls and make a sound with mabe animation
+                        ChangeState(); // Run away or do something else
+                    }
+                    else
+                        ChangeState(); // Do something else if the other has the same ability
+                }
             }
-        }*/
+        }
 
         //CheckCloset()
     
