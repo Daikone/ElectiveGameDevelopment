@@ -19,6 +19,7 @@ namespace Resources.Scripts.Matti_AI
        
        [HideInInspector]
         public GameObject ClosestHuman;
+        
 
 
         private void Start()
