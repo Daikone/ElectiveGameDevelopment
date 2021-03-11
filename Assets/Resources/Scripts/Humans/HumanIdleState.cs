@@ -15,6 +15,7 @@ public class HumanIdleState : BaseHumanBehaviour
     public float randomMovementChance;
 
     public float speed;
+    private bool isNew = true;
     
 
 
@@ -23,6 +24,8 @@ public class HumanIdleState : BaseHumanBehaviour
         _transform = animator.transform;
         Behaviour = animator.GetBehaviour<HumanGeneralBehaviour>();
         _navAgent = animator.gameObject.GetComponent<NavMeshAgent>();
+
+        
 
     }
 

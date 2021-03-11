@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,17 @@ public class GameManager : MonoBehaviour
     public GameObject human;
     //public bool isDone;
     private float currentTime;
-    private float currentHumans;
+    public GameObject[] currentHumans;
+
+    public delegate void spawnHumans();
+    public static event spawnHumans OnSpawnHumans;
+    
     public float[] ghostScores = {0, 0, 0, 0};
-    public const float MAXHUMANS = 3;
+    private const float MINHUMANS = 5;
     private const float MAXTIME = 65;
     private const float MAXPOINTS = 10;
+
+    public bool disableUI; 
 
     private void Start()
     {
@@ -24,9 +31,20 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        DisplayTime();
-        DisplayScore();
-        SpawnHumans();
+        if (!disableUI)
+        {
+            DisplayTime();
+            DisplayScore();
+            
+        }
+        
+        //expensive method but it was the fastest way
+        currentHumans = GameObject.FindGameObjectsWithTag("Human");
+        if (currentHumans.Length < MINHUMANS)
+        {
+            OnSpawnHumans?.Invoke();
+        }
+
     }
 
     void DisplayTime()
@@ -63,15 +81,7 @@ public class GameManager : MonoBehaviour
         winText.gameObject.SetActive(true);
     }
     
-    void SpawnHumans()
-    {
-        if (currentHumans < MAXHUMANS)
-        {
-            Vector3 position = new Vector3(Random.Range(-1.8f, 1.8f), 1, Random.Range(9.2f, 12.8f));
-            Instantiate(human, position,Quaternion.identity);
-            currentHumans++;
-        }
-    }
+    
     
     void GameOver()
     {
