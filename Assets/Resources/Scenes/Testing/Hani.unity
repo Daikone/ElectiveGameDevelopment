@@ -938,13 +938,6 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  rooms:
-  - name: MainHall
-    checkpoint: {fileID: 752882799}
-  - name: Hallway1
-    checkpoint: {fileID: 2076418407}
-  - name: SmallRoom
-    checkpoint: {fileID: 797172916}
 --- !u!1001 &215595007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4817,9 +4810,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c9739b2689219640bdeaa6358a4b01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gm: {fileID: 167757178}
-  agent: {fileID: 1581140240}
-  rooms: []
 --- !u!195 &1581140240
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -43753,7 +43743,7 @@ GameObject:
   - component: {fileID: 7558383073896262328}
   - component: {fileID: 7182984053519888388}
   - component: {fileID: 7182984053519888387}
-  - component: {fileID: 7182984053519888390}
+  - component: {fileID: 7182984053519888389}
   m_Layer: 0
   m_Name: newGhost
   m_TagString: Untagged
@@ -43797,7 +43787,7 @@ CapsuleCollider:
   m_Height: 0.8
   m_Direction: 1
   m_Center: {x: 0, y: -0.1, z: 0.02}
---- !u!114 &7182984053519888390
+--- !u!114 &7182984053519888389
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43806,7 +43796,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7182984053519888386}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c9739b2689219640bdeaa6358a4b01b, type: 3}
+  m_Script: {fileID: 11500000, guid: ef2b63ce457ef41d7a77805dc4231670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 167757178}
