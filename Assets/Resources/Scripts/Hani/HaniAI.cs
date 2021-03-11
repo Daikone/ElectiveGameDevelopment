@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using Enumerable = System.Linq.Enumerable;
 
 namespace HaniAISpace
 {
@@ -18,7 +16,6 @@ namespace HaniAISpace
     
     public enum ROOM{ MainHall, Hallway1, TopRightRoom}
     
-    public enum ABILITY{none, WallWalk, SoulSteal, Speedoost}
     public class HaniAI : BaseGhostAI
     {
 
@@ -164,7 +161,7 @@ namespace HaniAISpace
             //i GUESS YOU CAN ONLY HAVE 1 power up at a time
         }
 
-        void OnCollisionEnter(Collision collider)
+        /*void OnCollisionEnter(Collision collider)
         {
             if (collider.collider.CompareTag("Ghost"))
             {
@@ -181,7 +178,7 @@ namespace HaniAISpace
                         ChangeState(); // Do something else if the other has the same ability
                 }
             }
-        }
+        }*/
 
         //CheckCloset()
     

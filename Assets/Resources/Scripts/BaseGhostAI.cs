@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using  UnityEngine.AI;
 
+public enum ABILITY{none, WallWalk, SoulSteal, SpeedBoost}
 public class BaseGhostAI : MonoBehaviour
 {
     public GameManager gm;

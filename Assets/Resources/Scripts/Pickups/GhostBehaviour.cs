@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(CapsuleCollider))]
+[RequireComponent(typeof(Rigidbody))]
+
 public class GhostBehaviour : BaseGhostAI
 {
     public bool hasPickup = false;
     public int speed = 1;
 
-    
     //   !!!!!!! Matti Stuff !!!!!!!!!
     public string YourName;
     private SphereCollider _trigger;
