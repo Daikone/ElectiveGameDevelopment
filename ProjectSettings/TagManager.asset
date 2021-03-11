@@ -8,6 +8,7 @@ TagManager:
   - Ghost
   - Human
   - Pickup
+  - Cauldron
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Doors
   - Ghosts
   - IgnoreLineCast
-  - 
+  - Humans
   - 
   - 
   - 
