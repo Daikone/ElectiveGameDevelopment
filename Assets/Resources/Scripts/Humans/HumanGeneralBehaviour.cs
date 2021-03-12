@@ -39,7 +39,10 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
-            closestDoor = ClosestObjectInList(animator.gameObject, DoorsInSight);
+            if (DoorsInSight.Count > 0)
+            {
+                closestDoor = ClosestObjectInList(animator.gameObject, DoorsInSight);
+            }
             List<GameObject> secondClosestDoors = new List<GameObject>();
             foreach (var door in DoorsInSight)
             {
@@ -65,7 +68,7 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         
         //Behaviour Switches
         //Triggers behaviours
-        if (GhostsInSight.Count > 0)
+        if (GhostsInSight.Count > 0 && closestDoor != null)
         {
             animator.SetBool("SeesGhost", true);
         }
