@@ -35,6 +35,7 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         //Detecting
         DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, false );
         GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, true);
+        //Debug.Log(GhostsInSight.Count);
         
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
