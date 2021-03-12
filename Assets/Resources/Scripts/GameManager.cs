@@ -15,8 +15,9 @@ public class GameManager : MonoBehaviour
 
     public delegate void spawnHumans();
     public static event spawnHumans OnSpawnHumans;
-    
-    public float[] ghostScores = {0, 0, 0, 0};
+
+    public string[] playerNames = {"Esmé", "Hani", "Stijn", "Alex", "Matti"};
+    public float[] ghostScores = {0, 0, 0, 0, 0};
     private const float MINHUMANS = 5;
     private const float MAXTIME = 65;
     private const float MAXPOINTS = 10;
