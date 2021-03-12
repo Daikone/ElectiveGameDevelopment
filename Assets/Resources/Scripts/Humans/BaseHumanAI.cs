@@ -16,9 +16,9 @@ public class BaseHumanBehaviour : StateMachineBehaviour
         Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
         foreach (var collider in colliders)
         {
-            //Checks if door is in sight
+            //Checks if objects is in sight
             Vector3 lineTarget;
-            LayerMask doorlayer = new LayerMask();
+            
             
             if (collider.gameObject.layer == 8)
             {
@@ -37,7 +37,7 @@ public class BaseHumanBehaviour : StateMachineBehaviour
                     Debug.DrawLine(self.transform.position, lineTarget, Color.green);
                     
                     
-                    
+ 
                 
                     //adds to list 
                     if (objectsInRange != null)

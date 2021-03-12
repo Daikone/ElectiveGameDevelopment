@@ -35,7 +35,11 @@ public class HumanEscapingState : BaseHumanBehaviour
        //_transform.forward += ghostAdjust;
        
       // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-      _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
+      if (escapeDoor != null)
+      {
+          _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
+      }
+      
       
       if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
       {
