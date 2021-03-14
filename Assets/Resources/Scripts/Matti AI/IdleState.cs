@@ -1,31 +1,32 @@
-﻿
-using System;
+﻿using System.Collections;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Resources.Scripts.Matti_AI
 {
     public class IdleState : State
     {
-        private bool _initializing = false;
-        private StateMachine _stateMachine;
-
-        public override State RunCurrentState()
+        public IdleState(StateMachine sm) : base(sm)
         {
-            if (!_initializing)
+            stateMachine = sm;
+            owner = sm.owner;
+            baseAI = sm.owner.GetComponent<MattiBaseAI>();
+        }
+
+        public override void Enter()
+        {
+            Debug.Log("Idle");
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        public override void LogicUpdate()
+        {
+            if (baseAI.HumansInSight.Count > 0)
             {
-                _stateMachine = getStateMachine();
-                _initializing = true;
-            }
-            
-            if (ClosestHuman != null)
-            {
-                Debug.Log(_stateMachine.chaseState);
-                return _stateMachine.chaseState;
-            }
-            else
-            {
-                return this;
+                stateMachine.ChangeState(baseAI._chaseState);
             }
         }
     }
+
 }
