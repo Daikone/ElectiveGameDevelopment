@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Resources.Scripts.Matti_AI
 {
     public class ChaseState : State
     {
-        
-
-        public override State RunCurrentState()
+        public ChaseState(StateMachine sm) : base(sm)
         {
-           
-            return this;
+            stateMachine = sm;
+            owner = sm.owner;
+            baseAI = sm.owner.GetComponent<MattiBaseAI>();
+            
+        }
+
+        public override void Enter()
+        {
+            Debug.Log("Chasing");
         }
     }
 }

@@ -1,18 +1,48 @@
-﻿
-using System;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Resources.Scripts.Matti_AI
 {
-    
-    public abstract class State : StateMachine
+    public abstract class State
     {
-        
-        public StateMachine getStateMachine()
+        protected StateMachine stateMachine;
+        protected GameObject owner;
+        protected MattiBaseAI baseAI;
+
+        protected State(StateMachine sm)
         {
-            return gameObject.transform.parent.gameObject.GetComponent<StateMachine>();
+            stateMachine = sm;
+            owner = sm.owner;
+            baseAI = sm.owner.GetComponent<MattiBaseAI>();
+
+        }
+        
+        
+        public virtual void Enter()
+        {
+            
         }
 
-        public abstract State RunCurrentState();
+        public virtual void HandleInput()
+        {
+
+        }
+
+        public virtual void LogicUpdate()
+        {
+
+        }
+
+        public virtual void PhysicsUpdate()
+        {
+
+        }
+
+        public virtual void Exit()
+        {
+
+        }
 
     }
 }
