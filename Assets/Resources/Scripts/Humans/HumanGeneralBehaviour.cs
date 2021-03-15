@@ -35,10 +35,14 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         //Detecting
         DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, false );
         GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, true);
+        //Debug.Log(GhostsInSight.Count);
         
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
-            closestDoor = ClosestObjectInList(animator.gameObject, DoorsInSight);
+            if (DoorsInSight.Count > 0)
+            {
+                closestDoor = ClosestObjectInList(animator.gameObject, DoorsInSight);
+            }
             List<GameObject> secondClosestDoors = new List<GameObject>();
             foreach (var door in DoorsInSight)
             {
@@ -64,7 +68,7 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         
         //Behaviour Switches
         //Triggers behaviours
-        if (GhostsInSight.Count > 0)
+        if (GhostsInSight.Count > 0 && closestDoor != null)
         {
             animator.SetBool("SeesGhost", true);
         }

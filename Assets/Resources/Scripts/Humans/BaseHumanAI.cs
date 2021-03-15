@@ -10,16 +10,15 @@ public class BaseHumanBehaviour : StateMachineBehaviour
     {
 
         List<GameObject> objectsInRange = new List<GameObject>();
-        LayerMask ignoreLayer;
-        ignoreLayer =~(1 << 10);
+        LayerMask ignoreLayer = ~(1 << 10);
         
         
         Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
         foreach (var collider in colliders)
         {
-            //Checks if door is in sight
+            //Checks if objects is in sight
             Vector3 lineTarget;
-            LayerMask doorlayer = new LayerMask();
+            
             
             if (collider.gameObject.layer == 8)
             {
@@ -35,12 +34,15 @@ public class BaseHumanBehaviour : StateMachineBehaviour
                 if (Physics.Linecast(self.transform.position, lineTarget, out var hit2, ignoreLayer))
                 {
                     GameObject hitObject = hit2.collider.gameObject;
-                    Debug.DrawLine(self.transform.position, lineTarget);
+                    Debug.DrawLine(self.transform.position, lineTarget, Color.green);
+                    
+                    
+ 
                 
                     //adds to list 
                     if (objectsInRange != null)
                     {
-                        if ( hitObject == collider.gameObject && !objectsInRange.Contains(collider.gameObject))
+                        if ( hitObject.CompareTag("Ghost")  && !objectsInRange.Contains(collider.gameObject))
                         {
                             objectsInRange.Add(collider.gameObject);
                         

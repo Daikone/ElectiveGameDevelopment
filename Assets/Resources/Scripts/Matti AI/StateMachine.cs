@@ -1,62 +1,35 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 namespace Resources.Scripts.Matti_AI
 {
     
-    
-    public class  StateMachine : BaseGhostAI
+    public class StateMachine
     {
-        public  State _currentState;
-        public IdleState idleState;
-        public  ChaseState chaseState;
+        public State CurrentState;
+        public readonly GameObject owner;
+
+        public StateMachine(GameObject ow)
+        {
+            owner = ow;
+        }
         
-       public LayerMask humanLayerCheck;
-       private  List<GameObject> humansInSight = new List<GameObject>();
-       
-       [HideInInspector]
-        public GameObject ClosestHuman;
-        
-
-
-        private void Start()
+        public void Initialize(State startingState)
         {
-            _currentState = idleState;
+            CurrentState = startingState;
+            startingState.Enter();
+            
         }
 
-        private void Update()
+        public void ChangeState(State newState)
         {
-            RunStateMachine();
-            humansInSight = CheckCloseObjectsInSight(gameObject, 10f, humanLayerCheck);
-            if (humansInSight.Count > 0)
-            {
-                ClosestHuman = ClosestObjectInList(gameObject, humansInSight);
-            }
-            else
-            {
-                ClosestHuman = null;
-            }
+            CurrentState.Exit();
+
+            CurrentState = newState;
+            newState.Enter();
         }
-
-        private void RunStateMachine()
-        {
-            State nextState = _currentState?.RunCurrentState();
-
-            if (nextState != null)
-            {
-                SwitchToNextState(nextState);
-            }
-        }
-
-        private void SwitchToNextState(State nextState)
-        {
-            _currentState = nextState;
-        }
-
-        
     }
     
 }

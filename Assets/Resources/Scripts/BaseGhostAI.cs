@@ -23,9 +23,6 @@ public class BaseGhostAI : MonoBehaviour
     }
     
     
-    
-    
-    
     // !!!!!!!! Matti Stuff !!!!!!!!!!!!!
     
     

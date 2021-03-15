@@ -5,15 +5,11 @@ using UnityEngine;
 public class HumanSpawn : MonoBehaviour
 {
     public GameObject Human;
-    public bool isTheParentSpawn;
     // Start is called before the first frame update
     void Start()
     {
-        if (!isTheParentSpawn)
-        {
-            GameManager.OnSpawnHumans += spawnMoreHumans;
-            Human = transform.parent.gameObject.GetComponent<HumanSpawn>().Human;
-        }
+        
+        GameManager.OnSpawnHumans += spawnMoreHumans;
     }
 
     private void spawnMoreHumans()

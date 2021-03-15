@@ -15,7 +15,7 @@ public class HumanIdleState : BaseHumanBehaviour
     public float randomMovementChance;
 
     public float speed;
-    private bool isNew = true;
+    
     
 
 
