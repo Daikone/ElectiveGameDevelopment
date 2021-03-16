@@ -26,12 +26,14 @@ namespace HaniAISpace
 
         private STATE currentState;
         private ABILITY currentAbility;
-        //protected ROOM currentRoom;
+        private Vector3 targetRoomPos;
+        private Rigidbody rb;
 
         // Start is called before the first frame update
         void Start()
         {
-            speed = 3f;
+            rb = GetComponent<Rigidbody>();
+            speed = 4f;
             agent.speed = speed;
             MovetoPoint(ROOM.MainHall);
             currentAbility = ABILITY.none;
@@ -43,32 +45,39 @@ namespace HaniAISpace
        // Update is called once per frame
        void Update()
        {
-           if ( CheckHumanInfront()) // maybe only check when scouting or whatever so you can ignore them to deposit souls
+           if (transform.position == targetRoomPos)
+           {
+               currentState = STATE.Idle;
+               targetRoomPos = new Vector3(0, 0, 0);
+           }
+
+           if (carryingSouls >= 3)
+               DepositSouls();
+           else if ( CheckHumanInfront() && currentState != STATE.SoulDeposit) // maybe only check when scouting or whatever so you can ignore them to deposit souls
                ChaseHuman();
            else if (currentState == STATE.Idle)
            {
-               //InvokeRepeating("ChangeState", 0f, 1);
-               StartCoroutine(IdleLookAround());
-               //IdleLookAround();
+               InvokeRepeating("ChangeState", 0f, 5f); // being called multiple times
+               //StartCoroutine(IdleLookAround());
            }
-                // might not need invoke repeat
-           Debug.Log(currentState);
-        }
+
+           
+       }
 
         void ChangeState()
         {
             Debug.Log("change state called");
-            int randomNumber = Random.Range(1, 4);
+            int randomNumber = Random.Range(1, 3);
 
-            /*switch (randomNumber)
+            switch (randomNumber)
             {
-                case 1: currentState = STATE.RoomRoam;Debug.Log("Roam");
+                case 1: RoamAround();Debug.Log("Roam");
                     break;
-                case 2: currentState = STATE.RoomChange;Debug.Log("changeRoom");
+                case 2: MoveToRandomPoint();Debug.Log("changeRoom");
                     break;
-                case 3: currentState = STATE.Idle;Debug.Log("idle");
-                    break;
-            }*/
+                /*case 3: currentState = STATE.Idle;Debug.Log("idle");
+                    break;*/
+            }
         }
         
         private IEnumerator IdleLookAround()
@@ -86,13 +95,24 @@ namespace HaniAISpace
         protected void RoamAround()
         {
             currentState = STATE.RoomRoam;
-            //maybe self written as well
+            
+            GetComponent<Rigidbody>().MovePosition(transform.forward + Vector3.forward); // maybe add speed
+            
         }
 
-        
-        
-        public void MovetoPoint(ROOM roomName)
+        private void MoveToRandomPoint()
         {
+            int randomNumber = Random.Range(0, rooms.Count);
+            currentState = STATE.RoomChange;
+            agent.SetDestination(rooms[randomNumber].GetPos());
+            targetRoomPos = rooms[randomNumber].GetPos();
+            Debug.Log(randomNumber);
+        }
+        
+        private void MovetoPoint(ROOM roomName)
+        {
+            currentState = STATE.RoomChange;
+            
             string name = roomName.ToString();
             
             foreach (var room in rooms)
@@ -100,6 +120,7 @@ namespace HaniAISpace
                 if (room.name == name)
                 {
                     agent.SetDestination(room.GetPos());
+                    targetRoomPos = room.GetPos();
                     break;
                 }
             }
@@ -124,12 +145,12 @@ namespace HaniAISpace
             return false;
             
             //check infron instead of around so it doesn't check through walls
+            //check for ghosts as well?
         }    
 
         protected void DepositSouls()
         {
-            //maybe self written
-            //IN CAULDRON
+            currentState = STATE.SoulDeposit;
         }
 
         protected void ChaseHuman()
@@ -149,6 +170,7 @@ namespace HaniAISpace
             }
             
             //smooth rotate to target
+            //stop chasing if the target goes too far
         }
 
         private void Stealsouls()
