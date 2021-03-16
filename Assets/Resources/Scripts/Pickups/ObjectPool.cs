@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ObjectPool : MonoBehaviour
 {
@@ -14,14 +15,19 @@ public class ObjectPool : MonoBehaviour
         StartCoroutine(SpawnPickup());
     }
 
-    //Spawn amount of pickups over time, in a chosen radius
+    //Spawn amount of pickups over time, in a chosen radius, within the walkable NavMesh area
     IEnumerator SpawnPickup()
     {
-        while(true)
+        while (true)
         {
             Vector3 position = new Vector3(Random.Range(-spawnRadius, spawnRadius), 0, Random.Range(-spawnRadius, spawnRadius)) + transform.position;
-            Instantiate(Pickup[Random.Range(0, Pickup.Count)], position, Quaternion.identity, transform);
-
+            NavMeshHit hit;
+            Vector3 result;
+            if (NavMesh.SamplePosition(position, out hit, 1.0f, 1))
+            {
+                result = hit.position;
+                Instantiate(Pickup[Random.Range(0, Pickup.Count)], result, Quaternion.identity, transform);
+            }
             yield return new WaitForSeconds(spawnTimer);
         }
     }
