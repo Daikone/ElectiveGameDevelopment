@@ -12,7 +12,12 @@ namespace Resources.Scripts.Matti_AI
         public IdleState _idleState;
         public ChaseState _chaseState;
 
+        [HideInInspector]
         public List<GameObject> HumansInSight = new List<GameObject>();
+        [HideInInspector] public GameObject closestHuman;
+        
+        [HideInInspector]
+        public List<GameObject> DoorsInSight = new List<GameObject>();
         public LayerMask HumanLayerCheck;
     
     
@@ -29,6 +34,14 @@ namespace Resources.Scripts.Matti_AI
         void Update()
         {
             HumansInSight = CheckCloseObjectsInSight(gameObject, 10f, HumanLayerCheck);
+            if (HumansInSight.Count > 0)
+            {
+
+                closestHuman = ClosestObjectInList(gameObject, HumansInSight);
+            }
+
+
+
             _stateMachine.CurrentState.LogicUpdate();
         
         }

@@ -7,6 +7,7 @@ namespace Resources.Scripts.Matti_AI
 {
     public class IdleState : State
     {
+        
         public IdleState(StateMachine sm) : base(sm)
         {
             stateMachine = sm;
