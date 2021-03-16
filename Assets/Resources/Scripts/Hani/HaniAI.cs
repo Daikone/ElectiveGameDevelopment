@@ -122,6 +122,8 @@ namespace HaniAISpace
                 }
             }
             return false;
+            
+            //check infron instead of around so it doesn't check through walls
         }    
 
         protected void DepositSouls()
@@ -145,6 +147,8 @@ namespace HaniAISpace
                 transform.forward = new Vector3(direction.x, 0, direction.z);
                 //transform.LookAt(currentHuman.transform.position, Vector3.up); 
             }
+            
+            //smooth rotate to target
         }
 
         private void Stealsouls()

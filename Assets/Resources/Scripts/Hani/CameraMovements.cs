@@ -42,6 +42,8 @@ public class CameraMovements : MonoBehaviour
             //Debug.Log(monsters[0].rotation.eulerAngles);
             //transform.rotation = Quaternion.Euler(45, monsters[0].rotation.eulerAngles.y, 0);
             transform.LookAt(monsters[0]);
+            
+            //smoothout camera transitions
         }
             
     }
