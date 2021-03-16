@@ -35,9 +35,8 @@ namespace HaniAISpace
             rb = GetComponent<Rigidbody>();
             speed = 4f;
             agent.speed = speed;
-            MovetoPoint(ROOM.MainHall);
+            MovetoPoint(ROOM.Hallway1);
             currentAbility = ABILITY.none;
-            //currentState = STATE.Idle;
 
             //rooms = new List<Room>();
         }

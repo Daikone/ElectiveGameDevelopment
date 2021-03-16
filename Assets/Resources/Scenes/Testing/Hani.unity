@@ -933,11 +933,19 @@ MonoBehaviour:
   - {fileID: 135810230}
   timer: {fileID: 2000593974}
   human: {fileID: 7575634237879827313, guid: 572a147788bd1c149885f10e4886f3ba, type: 3}
+  currentHumans: []
+  playerNames:
+  - "Esm\xE9"
+  - Hani
+  - Stijn
+  - Alex
+  - Matti
   ghostScores:
   - 0
   - 0
   - 0
   - 0
+  disableUI: 0
 --- !u!1001 &215595007
 PrefabInstance:
   m_ObjectHideFlags: 0
