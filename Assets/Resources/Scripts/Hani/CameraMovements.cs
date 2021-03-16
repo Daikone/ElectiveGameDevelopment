@@ -4,6 +4,7 @@ using UnityEngine;
 public class CameraMovements : MonoBehaviour
 {
     public Transform[] monsters;
+    public float offsetDistance = 1f;
     private Vector3 overviewPosition;
     private Vector3 monsterOffset;
 
@@ -27,6 +28,7 @@ public class CameraMovements : MonoBehaviour
         {
             followMonster = false;
             transform.position = overviewPosition;
+            transform.rotation = Quaternion.Euler(45, 0, 0);
         }
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -34,14 +36,17 @@ public class CameraMovements : MonoBehaviour
 
         if (followMonster)
         {
+            monsterOffset = -monsters[0].forward.normalized * offsetDistance;
+            monsterOffset += new Vector3(0f, offsetDistance, 0f);
             transform.position = monsters[0].position + monsterOffset;
-            //transform.rotation = Quaternion.Euler(45, monsters[0].rotation.y, 0);
+            //Debug.Log(monsters[0].rotation.eulerAngles);
+            //transform.rotation = Quaternion.Euler(45, monsters[0].rotation.eulerAngles.y, 0);
+            transform.LookAt(monsters[0]);
         }
             
     }
 
-    void CameraChange()
-    {
+    void CameraChange(){
         randomNumber = Random.Range(0, monsters.Length + 1);
 
         if(randomNumber == monsters.Length)
