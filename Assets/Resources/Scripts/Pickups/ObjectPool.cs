@@ -26,8 +26,10 @@ public class ObjectPool : MonoBehaviour
             if (NavMesh.SamplePosition(position, out hit, 1.0f, 1))
             {
                 result = hit.position;
+                result.y = transform.position.y;
                 Instantiate(Pickup[Random.Range(0, Pickup.Count)], result, Quaternion.identity, transform);
             }
+
             yield return new WaitForSeconds(spawnTimer);
         }
     }
