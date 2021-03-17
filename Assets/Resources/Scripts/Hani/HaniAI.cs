@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HaniAISpace
@@ -28,6 +29,7 @@ namespace HaniAISpace
         private ABILITY currentAbility;
         private Vector3 targetRoomPos;
         private Rigidbody rb;
+        private float distanceToCurrentHuman;
 
         // Start is called before the first frame update
         void Start()
@@ -44,19 +46,38 @@ namespace HaniAISpace
        // Update is called once per frame
        void Update()
        {
+           if(rb.velocity.magnitude < .7f) //change state after colliding with human or getting a point maybe
+               Invoke("ChangeState", 2f);
+               //Debug.Log("notmoving");
+           
+           Debug.Log(currentState);
+           Debug.Log(rb.velocity.magnitude);
+           if (currentHuman != null)
+           {
+               distanceToCurrentHuman = (currentHuman.transform.position - transform.position).magnitude;
+               Debug.Log(distanceToCurrentHuman);
+               if (distanceToCurrentHuman >= 3f)
+                   currentState = STATE.Idle;
+               /*else if (distanceToCurrentHuman <= 0.1f)
+                   currentState = STATE.Idle;*/
+           }
+
+           
+
            if (transform.position == targetRoomPos)
            {
                currentState = STATE.Idle;
                targetRoomPos = new Vector3(0, 0, 0);
            }
 
-           if (carryingSouls >= 3)
-               DepositSouls();
-           else if ( CheckHumanInfront() && currentState != STATE.SoulDeposit) // maybe only check when scouting or whatever so you can ignore them to deposit souls
+           /*if (carryingSouls >= 3)
+               DepositSouls();*/
+           if ( CheckHumanInfront() && currentState != STATE.SoulDeposit) // maybe only check when scouting or whatever so you can ignore them to deposit souls
                ChaseHuman();
            else if (currentState == STATE.Idle)
            {
-               InvokeRepeating("ChangeState", 0f, 5f); // being called multiple times
+               ChangeState();
+               //InvokeRepeating("ChangeState", 0f, 5f); // being called multiple times
                //StartCoroutine(IdleLookAround());
            }
 
@@ -70,7 +91,7 @@ namespace HaniAISpace
 
             switch (randomNumber)
             {
-                case 1: RoamAround();Debug.Log("Roam");
+                case 1: StartCoroutine(RoamAround());Debug.Log("Roam");
                     break;
                 case 2: MoveToRandomPoint();Debug.Log("changeRoom");
                     break;
@@ -91,12 +112,15 @@ namespace HaniAISpace
             //ChangeState(); 
         }
 
-        protected void RoamAround()
+        IEnumerator RoamAround()
         {
             currentState = STATE.RoomRoam;
             
-            GetComponent<Rigidbody>().MovePosition(transform.forward + Vector3.forward); // maybe add speed
-            
+            //GetComponent<Rigidbody>().MovePosition(transform.forward + Vector3.forward); // maybe add speed
+
+            yield return new WaitForSeconds(3f);
+
+            currentState = STATE.Idle;
         }
 
         private void MoveToRandomPoint()
@@ -130,8 +154,9 @@ namespace HaniAISpace
         {
             //currentState = STATE.Scanning;
         
-            Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3);
+            Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3); // variable instead of hardcode
         
+            //if(humansNearby.Contains<GameObject>(gameObject))
             foreach (var human in humansNearby)
             {
                 if (human.CompareTag("Human"))
@@ -145,11 +170,15 @@ namespace HaniAISpace
             
             //check infron instead of around so it doesn't check through walls
             //check for ghosts as well?
+
+            CheckCloseObjectsInSight(this.gameObject, 4f, 2);
+
         }    
 
         protected void DepositSouls()
         {
             currentState = STATE.SoulDeposit;
+            MovetoPoint(ROOM.MainHall);
         }
 
         protected void ChaseHuman()
