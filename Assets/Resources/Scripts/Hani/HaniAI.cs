@@ -31,6 +31,8 @@ namespace HaniAISpace
         private Rigidbody rb;
         private float distanceToCurrentHuman;
 
+        private int randomNumber;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -50,8 +52,8 @@ namespace HaniAISpace
                Invoke("ChangeState", 2f);
                //Debug.Log("notmoving");
            
-           Debug.Log(currentState);
-           Debug.Log(rb.velocity.magnitude);
+           Debug.Log("HaniAI currentState = " + currentState);
+           //Debug.Log(rb.velocity.magnitude);
            if (currentHuman != null)
            {
                distanceToCurrentHuman = (currentHuman.transform.position - transform.position).magnitude;
@@ -64,11 +66,13 @@ namespace HaniAISpace
 
            
 
-           if (transform.position == targetRoomPos)
+           if (Vector3.Distance(transform.position, targetRoomPos)  <= .3f)
            {
                currentState = STATE.Idle;
                targetRoomPos = new Vector3(0, 0, 0);
            }
+           
+           Debug.Log(targetRoomPos);
 
            /*if (carryingSouls >= 3)
                DepositSouls();*/
@@ -87,7 +91,7 @@ namespace HaniAISpace
         void ChangeState()
         {
             Debug.Log("change state called");
-            int randomNumber = Random.Range(1, 3);
+            int randomNumber = Random.Range(2, 3);
 
             switch (randomNumber)
             {
@@ -125,11 +129,14 @@ namespace HaniAISpace
 
         private void MoveToRandomPoint()
         {
-            int randomNumber = Random.Range(0, rooms.Count);
+            
+            if(currentState == STATE.Idle)
+              randomNumber = Random.Range(0, rooms.Count);
             currentState = STATE.RoomChange;
             agent.SetDestination(rooms[randomNumber].GetPos());
             targetRoomPos = rooms[randomNumber].GetPos();
-            Debug.Log(randomNumber);
+            
+            //Debug.Log(randomNumber);
         }
         
         private void MovetoPoint(ROOM roomName)
@@ -153,6 +160,9 @@ namespace HaniAISpace
         protected bool CheckHumanInfront()
         {
             //currentState = STATE.Scanning;
+            targetRoomPos = rooms[0].GetPos();
+
+            //CheckCloseObjectsInSight(gameObject, 2f, Humans);
         
             Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3); // variable instead of hardcode
         
@@ -161,7 +171,7 @@ namespace HaniAISpace
             {
                 if (human.CompareTag("Human"))
                 {
-                    Debug.Log("Human nearby");
+                    //Debug.Log("Human nearby");
                     currentHuman = human.gameObject;
                     return true;
                 }
@@ -187,7 +197,6 @@ namespace HaniAISpace
 
             if (currentHuman != null)
             {
-                Debug.Log("human not nul");
                 Vector3 direction = currentHuman.transform.position - transform.position;
                 direction.Normalize();
 
@@ -237,6 +246,22 @@ namespace HaniAISpace
         //CheckCloset()
     
         //protected PowerUp()*/
+        
+        /*if (other.collider.CompareTag("Ghost"))
+        {
+            if (currentAbility == ABILITY.SoulSteal)
+            {
+                var otherAI = other.collider.GetComponent<GhostBehaviour>(); // current ability will be in the baseghostAI
+
+                if (otherAI.currentAbility != ABILITY.SoulSteal)
+                {
+                    carryingSouls += otherAI.carryingSouls; // Add to yor souls and make a sound with mabe animation
+                    //ChangeState(); // Run away or do something else
+                }
+                //else
+                //ChangeState(); // Do something else if the other has the same ability
+            }
+        }*/
     
     }
 }

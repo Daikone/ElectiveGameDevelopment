@@ -12,6 +12,8 @@ public class CameraMovements : MonoBehaviour
     private int randomNumber;
     private bool followMonster;
 
+    private int randNum;
+
     private void Start()
     {
         overviewPosition = new Vector3(-12.6f, 20f, -52f);
@@ -32,18 +34,21 @@ public class CameraMovements : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.M))
+        {
+            randNum = Random.Range(0, monsters.Length);
             followMonster = true;
+        }
 
         if (followMonster)
         {
             monsterOffset = -monsters[0].forward.normalized * offsetDistance;
             monsterOffset += new Vector3(0f, offsetDistance, 0f);
             transform.position = monsters[0].position + monsterOffset;
-            //Debug.Log(monsters[0].rotation.eulerAngles);
-            //transform.rotation = Quaternion.Euler(45, monsters[0].rotation.eulerAngles.y, 0);
             transform.LookAt(monsters[0]);
             
             //smoothout camera transitions
+            //Debug.Log(monsters[0].rotation.eulerAngles);
+            //transform.rotation = Quaternion.Euler(45, monsters[0].rotation.eulerAngles.y, 0);
         }
             
     }
