@@ -19,7 +19,8 @@ namespace HaniAISpace
     
     public class HaniAI : BaseGhostAI
     {
-
+        //constantly in room change state
+        
         public List<Room> rooms;
         
         private float rotationSpeed = 1f;
@@ -57,7 +58,7 @@ namespace HaniAISpace
            if (currentHuman != null)
            {
                distanceToCurrentHuman = (currentHuman.transform.position - transform.position).magnitude;
-               Debug.Log(distanceToCurrentHuman);
+               //Debug.Log(distanceToCurrentHuman);
                if (distanceToCurrentHuman >= 3f)
                    currentState = STATE.Idle;
                /*else if (distanceToCurrentHuman <= 0.1f)
@@ -121,6 +122,7 @@ namespace HaniAISpace
             currentState = STATE.RoomRoam;
             
             //GetComponent<Rigidbody>().MovePosition(transform.forward + Vector3.forward); // maybe add speed
+            agent.SetDestination(rooms[0].GetPos());
 
             yield return new WaitForSeconds(3f);
 
@@ -160,11 +162,32 @@ namespace HaniAISpace
         protected bool CheckHumanInfront()
         {
             //currentState = STATE.Scanning;
-            targetRoomPos = rooms[0].GetPos();
 
-            //CheckCloseObjectsInSight(gameObject, 2f, Humans);
-        
-            Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3); // variable instead of hardcode
+            List<GameObject> nearbyHumans = CheckCloseObjectsInSight(gameObject, 2f, LayerMask.GetMask("Humans", "Walls"));
+
+            /*Collider[] nearbyObj = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Humans", "Walls"));
+
+            List<Collider> near = nearbyObj.ToList();
+
+            List<GameObject> gmObjs = new List<GameObject>();
+
+            foreach (var obj in near)
+            {
+                gmObjs.Add(obj.gameObject);
+            }*/
+
+            if (nearbyHumans.Count > 0)
+            {
+                GameObject closeObject = ClosestObjectInList(gameObject, nearbyHumans);
+                if (closeObject.CompareTag("Human"))
+                {
+                    currentHuman = closeObject;
+                    return true;
+                }
+            }
+            return false;
+
+            /*Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3); // variable instead of hardcode
         
             //if(humansNearby.Contains<GameObject>(gameObject))
             foreach (var human in humansNearby)
@@ -176,12 +199,10 @@ namespace HaniAISpace
                     return true;
                 }
             }
-            return false;
-            
+            return false;*/
+
             //check infron instead of around so it doesn't check through walls
             //check for ghosts as well?
-
-            CheckCloseObjectsInSight(this.gameObject, 4f, 2);
 
         }    
 
