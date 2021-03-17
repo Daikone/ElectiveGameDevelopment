@@ -35,10 +35,10 @@ namespace HaniAISpace
         void Start()
         {
             rb = GetComponent<Rigidbody>();
-            speed = 4f;
-            agent.speed = speed;
+            agent.speed = GetSpeed();
             MovetoPoint(ROOM.Hallway1);
             currentAbility = ABILITY.none;
+            
 
             //rooms = new List<Room>();
         }

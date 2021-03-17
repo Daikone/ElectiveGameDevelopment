@@ -11,7 +11,7 @@ public class BaseGhostAI : MonoBehaviour
 
     protected bool isStunned;
     protected float carryingSouls;
-    protected float speed;
+    private static int NORMALSPEED = 4;
     
     private void OnCollisionEnter(Collision other)
     {
@@ -20,6 +20,11 @@ public class BaseGhostAI : MonoBehaviour
             carryingSouls++;
             Destroy(other.gameObject);
         }
+    }
+
+    public int GetSpeed()
+    {
+        return NORMALSPEED;
     }
     
     

@@ -10,12 +10,12 @@ using UnityEngine.AI;
 public class GhostBehaviour : BaseGhostAI
 {
     public bool hasPickup = false;
-    public int speed = 1;
     
     
     //   !!!!!!! Matti Stuff !!!!!!!!!
     public string YourName;
     private GameObject Cauldron;
+    public int speed;
 
     public float getSouls()
     {
@@ -29,7 +29,8 @@ public class GhostBehaviour : BaseGhostAI
         Cauldron = GameObject.Find("Cauldron");
         carryingSouls = 0;
         isStunned = false;
-        
+        speed = GetSpeed();
+
     }
     
     

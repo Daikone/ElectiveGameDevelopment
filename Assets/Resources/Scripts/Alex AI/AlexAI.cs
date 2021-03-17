@@ -49,8 +49,7 @@ namespace AlexAISpace
         // Start is called before the first frame update
         void Start()
         {
-            speed = 3f;
-            agent.speed = speed;
+            agent.speed = GetSpeed();
             currentAbility = ABILITY.none;
             currentRoom = ROOM.InnerRoom;
             newState = STATE.Idle;
