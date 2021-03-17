@@ -17,6 +17,20 @@ namespace Resources.Scripts.Matti_AI
         public override void Enter()
         {
             Debug.Log("Chasing");
+            
+        }
+
+        public override void LogicUpdate()
+        {
+            if (baseAI.closestHuman != null)
+            {
+                baseAI.agent.SetDestination(baseAI.closestHuman.transform.position);
+
+            }
+            else
+            {
+                stateMachine.ChangeState(baseAI._idleState);
+            }
         }
     }
 }
