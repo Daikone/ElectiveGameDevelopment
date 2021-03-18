@@ -9,6 +9,7 @@ TagManager:
   - Human
   - Pickup
   - Cauldron
+  - Room
   layers:
   - Default
   - TransparentFX
