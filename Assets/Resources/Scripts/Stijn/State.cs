@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Resources.Scripts.Stijn
 {
-    public abstract class StijnState
+    public abstract class State
     {
         protected StijnStateMachine stateMachine;
         protected StijnGhost character;
 
-        protected StijnState(CharacterController character, StijnStateMachine stateMachine)
+        protected State(CharacterController character, StijnStateMachine stateMachine)
         {
-            this.character = character;
+            //this.character = character;
             this.stateMachine = stateMachine;
         }
 

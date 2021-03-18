@@ -8,17 +8,17 @@ namespace Resources.Scripts.Stijn
     public class StijnGhost : BaseGhostAI
     {
         public StijnStateMachine movementSM;
-        public StandingState standing;
+        //public StandingState standing;
         public ChasingState chasing;
 
         private void Awake()
         {
             movementSM = new StijnStateMachine();
 
-            standing = new StandingState(this, movementSM);
-            chasing = new ChasingState(this, movementSM);
+            //standing = new StandingState(this, movementSM);
+            //chasing = new ChasingState(this, movementSM);
 
-            movementSM.Initialize(standing);
+            //movementSM.Initialize(standing);
         }
 
         private void Update()
