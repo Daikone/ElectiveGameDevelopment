@@ -7,13 +7,15 @@ using UnityEngine.AI;
 public class EsmeGhostAi : MonoBehaviour
 {
     enum EState { patrolling, attackHuman, attackGhost, depositSouls, getPickup }
+
     [SerializeField] private EState _state = EState.patrolling;
     private Vector3 patrolPosition;
-
-    List<Collider> OthersColliders = new List<Collider>();
+    private Vector3 eyesPosition;
+    private List<Collider> OthersColliders = new List<Collider>();
 
     GhostBehaviour ghostBehaviour;
     NavMeshAgent navMeshAgent;
+    [SerializeField] bool ShowDebugLines;
 
     void Start ()
     {
@@ -21,10 +23,10 @@ public class EsmeGhostAi : MonoBehaviour
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
     void Update ()
     {  
-        detecting();
+        detectingOthersColliders();
+        selectGhostState();
     
         switch (_state)
         {
@@ -44,24 +46,28 @@ public class EsmeGhostAi : MonoBehaviour
                 break;
             }
         }
+
+        showDebugLines();
     }
 
-    void detecting ()
+    void detectingOthersColliders ()
     {
-        Collider[] collidersInRadius = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
+        eyesPosition = transform.position + new Vector3(0, 1, 0);
+        Collider[] othersCollidersInRadius = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
         OthersColliders = new List<Collider>();
 
-        foreach (Collider collider in collidersInRadius)
+        foreach (Collider otherCollider in othersCollidersInRadius)
         {
-            if (!Physics.Linecast(transform.position, collider.transform.position, LayerMask.GetMask("Walls"))) 
+            if (!Physics.Linecast(eyesPosition, otherCollider.transform.position, LayerMask.GetMask("Walls"))) 
             {
-                OthersColliders.Add(collider);
-                // Debug.DrawLine(transform.position, collider.transform.position, Color.cyan);
+                OthersColliders.Add(otherCollider);
             }
         }
 
-        OthersColliders.OrderByDescending(collider => Vector3.Distance(collider.transform.position, transform.position));
+        OthersColliders = OthersColliders.OrderBy(otherCollider => Vector3.Distance(otherCollider.transform.position, transform.position)).ToList();
+    }
 
+    void selectGhostState () {
         if (OthersColliders.Count > 0)
         {
             switch (OthersColliders[0].tag)
@@ -71,6 +77,10 @@ public class EsmeGhostAi : MonoBehaviour
                     if (!ghostBehaviour.hasPickup)
                     {
                         _state = EState.getPickup;
+                    }
+                    else
+                    {
+                        _state = EState.patrolling;
                     }
                     break;
                 }
@@ -93,30 +103,49 @@ public class EsmeGhostAi : MonoBehaviour
     }
 
     void patrolling () {
-        if (navMeshAgent.destination == patrolPosition || patrolPosition == new Vector3()) {
-            if (NavMesh.SamplePosition(new Vector3(Random.Range(-16, 16), 0, Random.Range(-16, 16)), out NavMeshHit hit, 1.0f, 1))
+        if (transform.position == patrolPosition || navMeshAgent.destination != patrolPosition || patrolPosition == new Vector3()) {
+            if (NavMesh.SamplePosition(new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20)) + transform.position, out NavMeshHit hit, 1.0f, 1))
             {
                 patrolPosition = hit.position;
-                navMeshAgent.destination = patrolPosition;
             }
         }
-        Debug.DrawLine(transform.position, patrolPosition, Color.magenta);
+
+        navMeshAgent.destination = patrolPosition;
     }
 
     void getPickup ()
     {
-        patrolPosition = new Vector3();
         navMeshAgent.destination = OthersColliders[0].transform.position;
-        Debug.DrawLine(transform.position, OthersColliders[0].transform.position, Color.green);
     }
 
     void attackHuman ()
     {
-        patrolPosition = new Vector3();
-        if (OthersColliders.Count > 0)
+        navMeshAgent.destination = OthersColliders[0].transform.position;
+    }
+
+    void showDebugLines ()
+    {
+        if (ShowDebugLines)
         {
-            navMeshAgent.destination = OthersColliders[0].transform.position;
-            Debug.DrawLine(transform.position, OthersColliders[0].transform.position, Color.red);
+            switch (_state)
+            {
+                case EState.patrolling:
+                {
+                    Debug.DrawLine(eyesPosition, patrolPosition, Color.magenta);
+                    break;
+                }
+                case EState.attackHuman:
+                {
+                    Debug.DrawLine(eyesPosition, OthersColliders[0].transform.position, Color.red);
+                    break;
+                }
+                case EState.getPickup:
+                {
+                    Debug.DrawLine(eyesPosition, OthersColliders[0].transform.position, Color.green);
+                    break;
+                }
+            }
         }
     }
 }
+

@@ -17,6 +17,7 @@ namespace Resources.Scripts.Matti_AI
         public override void Enter()
         {
             Debug.Log("Chasing");
+            baseAI.agent.ResetPath();
             
         }
 

@@ -18,6 +18,8 @@ namespace Resources.Scripts.Matti_AI
         public override void Enter()
         {
             Debug.Log("Idle");
+            baseAI.agent.ResetPath();
+            baseAI.PreviousDoors.Clear();
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -27,6 +29,11 @@ namespace Resources.Scripts.Matti_AI
             {
                 stateMachine.ChangeState(baseAI._chaseState);
             }
+            else
+            {
+                baseAI.agent.SetDestination(baseAI.ClosestDoorPos);
+            }
+
         }
     }
 

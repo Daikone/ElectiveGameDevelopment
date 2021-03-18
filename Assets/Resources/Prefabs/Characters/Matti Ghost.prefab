@@ -122,10 +122,15 @@ MonoBehaviour:
   agent: {fileID: 2195100384117238768}
   HumansInSight: []
   closestHuman: {fileID: 0}
-  DoorsInSight: []
+  CloseDoors: []
   HumanLayerCheck:
     serializedVersion: 2
     m_Bits: 2048
+  DoorLayerCheck:
+    serializedVersion: 2
+    m_Bits: 256
+  ClosestDoor: {fileID: 0}
+  PreviousDoor: {fileID: 0}
 --- !u!1 &6642335458171265390
 GameObject:
   m_ObjectHideFlags: 0
