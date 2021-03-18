@@ -7,15 +7,15 @@ namespace Resources.Scripts.Stijn
 {
     public class StijnStateMachine
     {
-        public StijnState CurrentState { get; private set; }
+        public State CurrentState { get; private set; }
 
-        public void Initialize(StijnState startingState)
+        public void Initialize(State startingState)
         {
             CurrentState = startingState;
             startingState.Enter();
         }
 
-        public void ChangeState(StijnState newState)
+        public void ChangeState(State newState)
         {
             CurrentState.Exit();
 
