@@ -34,6 +34,7 @@ namespace AlexAISpace
         private float rotationSpeed = 1f;
         private GameObject currentHuman;
         private bool HasMoved;
+        public AudioClip Kill;
 
         //Statemachine var
         public List<Room> rooms;
@@ -54,6 +55,9 @@ namespace AlexAISpace
             currentRoom = ROOM.InnerRoom;
             newState = STATE.Idle;
             HasMoved = false;
+
+            GetComponent<AudioSource>().playOnAwake = false;
+            GetComponent<AudioSource>().clip = Kill;
         }
 
         // Update is called once per frame
@@ -149,6 +153,7 @@ namespace AlexAISpace
                 {
                     //Debug.Log("Human nearby");
                     currentHuman = human.gameObject;
+                    Debug.Log("I got you!");
                     return true;
                 }
             }
