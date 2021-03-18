@@ -17,10 +17,21 @@ namespace Resources.Scripts.Matti_AI
         [HideInInspector] public GameObject closestHuman;
         
         [HideInInspector]
-        public List<GameObject> DoorsInSight = new List<GameObject>();
+        public List<GameObject> CloseDoors= new List<GameObject>();
         public LayerMask HumanLayerCheck;
-    
-    
+        public LayerMask DoorLayerCheck;
+
+        [HideInInspector]
+        public GameObject ClosestDoor;
+
+        [HideInInspector] 
+        public Vector3 ClosestDoorPos;
+
+
+        public List<GameObject> PreviousDoors = new List<GameObject>();
+        
+        
+
 
         private void Awake()
         {
@@ -33,17 +44,37 @@ namespace Resources.Scripts.Matti_AI
         // Update is called once per frame
         void Update()
         {
-            HumansInSight = CheckCloseObjectsInSight(gameObject, 10f, HumanLayerCheck);
+            HumansInSight = CheckCloseObjectsInSight(gameObject, 30f, HumanLayerCheck);
             if (HumansInSight.Count > 0)
             {
-
                 closestHuman = ClosestObjectInList(gameObject, HumansInSight);
             }
+            
+            
+            
+            CloseDoors = CheckCloseObjects(gameObject, 30f, DoorLayerCheck);
+            ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
 
+            if (Vector3.Distance(transform.position, calculateDoorOffset(ClosestDoor)) <= 1)
+            {
+                PreviousDoors.Insert(0,ClosestDoor);
+            }
+            foreach (var door in PreviousDoors)
+            {
+                CloseDoors.Remove(door);
+                
+            }
 
-
+            if (CloseDoors.Count > 0)
+            {
+                ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
+            }
+            
+            ClosestDoorPos = calculateDoorOffset(ClosestDoor);
+            
             _stateMachine.CurrentState.LogicUpdate();
-        
+            
+
         }
     }
 }
