@@ -56,19 +56,26 @@ namespace HaniAISpace
            /*if(rb.velocity.magnitude < 1.5f) //change state after colliding with human or getting a point maybe
                currentState = STATE.Idle;*/
            
-           Debug.Log("HaniAI currentState = " + currentState);           
+           Debug.Log("HaniAI currentState = " + currentState);
            //Debug.Log(targetRoomPos);
            //Debug.Log(rb.velocity.magnitude);
            //Mathf.Approximately(rb.velocity.magnitude, 0f)
 
            /*if (carryingSouls >= 3)
                DepositSouls();*/
-           if (currentState == STATE.Hunting && currentHuman != null && Vector3.Distance(transform.position, currentHuman.transform.position) <= 0f)
+           if (currentState == STATE.Hunting && currentHuman == null)
                currentState = STATE.Idle;
-           else if ( CheckHumanInfront() && currentState != STATE.SoulDeposit) // maybe only check when scouting or whatever so you can ignore them to deposit souls
+           else if (currentState == STATE.Hunting && currentHuman != null && Vector3.Distance(transform.position, currentHuman.transform.position) >= 10f)
+               currentState = STATE.Idle;
+           else if (CheckHumanInfront() && currentState != STATE.SoulDeposit)
+           {
+               CancelInvoke();
+               // maybe only check when scouting or whatever so you can ignore them to deposit souls
                ChaseHuman();
+           } 
            else if (currentState == STATE.Idle)
            {
+               CancelInvoke();
                MoveToRandomPoint();
                //// being called multiple times
                //StartCoroutine(IdleLookAround());
@@ -76,7 +83,7 @@ namespace HaniAISpace
            else if (currentState == STATE.RoomChange && Vector3.Distance(transform.position, targetRoomPos) <= 1f)
                currentState = STATE.Idle;
 
-           
+           //stuck in room change
        }
 
         void ChangeState()
@@ -132,7 +139,7 @@ namespace HaniAISpace
             currentState = STATE.RoomChange;
             targetRoomPos = rooms[randomNumber].GetPos();
             agent.SetDestination(targetRoomPos);
-            
+            Invoke("MoveToRandomPoint", 5f);
             //Debug.Log(randomNumber);
         }
         
