@@ -13,15 +13,7 @@ public class BaseGhostAI : MonoBehaviour
     protected float carryingSouls;
     private static int NORMALSPEED = 4;
     
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Human"))
-        {
-            carryingSouls++;
-            Destroy(other.gameObject);
-        }
-    }
-
+    
     public int GetSpeed()
     {
         return NORMALSPEED;
