@@ -50,7 +50,9 @@ public class HumanIdleState : BaseHumanBehaviour
         
         //anti fly away
         _transform.localEulerAngles = new Vector3(0f,_transform.localEulerAngles.y,0f);
-        _transform.position += _transform.forward * (speed * Time.deltaTime);
+
+        _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
+       // _transform.position += _transform.forward * (speed * Time.deltaTime);
         
         
         
