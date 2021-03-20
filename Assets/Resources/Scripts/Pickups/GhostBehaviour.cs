@@ -6,6 +6,7 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AudioSource))]
 
 public class GhostBehaviour : BaseGhostAI
 {
@@ -16,6 +17,9 @@ public class GhostBehaviour : BaseGhostAI
     public string YourName;
     private GameObject Cauldron;
     public int speed;
+
+    // !!!!!!!Alex Audio Solution!!!!!! \\
+    public AudioClip KillSound;
 
     public float getSouls()
     {
@@ -31,9 +35,12 @@ public class GhostBehaviour : BaseGhostAI
         isStunned = false;
         speed = GetSpeed();
 
+        //Audio For killing humans (Alex)
+        GetComponent<AudioSource>().playOnAwake = false;
+        GetComponent<AudioSource>().clip = KillSound;
     }
-    
-    
+
+
     // Update is called once per frame
     void Update()
     {
@@ -56,6 +63,9 @@ public class GhostBehaviour : BaseGhostAI
         {
             Destroy(obj);
             carryingSouls++;
+
+            //audio
+            GetComponent<AudioSource>().Play();
         }
         
     }
