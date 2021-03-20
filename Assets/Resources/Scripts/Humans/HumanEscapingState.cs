@@ -35,19 +35,26 @@ public class HumanEscapingState : BaseHumanBehaviour
        //_transform.forward += ghostAdjust;
        
       // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-      if (escapeDoor != null)
+      if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
       {
           _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
       }
-      
-      
-      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
+      else
       {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
+          _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
+          _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
+      }
+      
+      
+      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 2)
+      {
+          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized) ;
           animator.SetBool("SeesGhost", false);
       }
       
     }
+
+   
     
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
