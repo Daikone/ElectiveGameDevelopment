@@ -15,6 +15,7 @@ namespace Resources.Scripts.Matti_AI
         [HideInInspector]
         public List<GameObject> HumansInSight = new List<GameObject>();
         [HideInInspector] public GameObject closestHuman;
+        [HideInInspector] public Vector3 closestHumanLastPos;
         
         [HideInInspector]
         public List<GameObject> CloseDoors= new List<GameObject>();
@@ -48,6 +49,7 @@ namespace Resources.Scripts.Matti_AI
             if (HumansInSight.Count > 0)
             {
                 closestHuman = ClosestObjectInList(gameObject, HumansInSight);
+                closestHumanLastPos = closestHuman.transform.position;
             }
             
             

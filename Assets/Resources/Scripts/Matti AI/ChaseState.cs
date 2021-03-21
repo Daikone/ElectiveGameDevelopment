@@ -23,10 +23,14 @@ namespace Resources.Scripts.Matti_AI
 
         public override void LogicUpdate()
         {
-            if (baseAI.closestHuman != null)
+            if (baseAI.HumansInSight.Count > 0)
             {
                 baseAI.agent.SetDestination(baseAI.closestHuman.transform.position);
-
+                
+            }else if (baseAI.HumansInSight.Count == 0)
+            {
+                baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
+                
             }
             else
             {
