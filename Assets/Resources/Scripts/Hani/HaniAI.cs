@@ -47,7 +47,7 @@ namespace HaniAISpace
        void Update()
        {
            CheckState();
-           Debug.Log("HaniAI currentState = " + currentState);
+           //Debug.Log("HaniAI currentState = " + currentState);
        }
 
         private void CheckState()
