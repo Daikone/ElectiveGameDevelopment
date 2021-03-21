@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 namespace HaniAISpace
@@ -18,6 +20,7 @@ namespace HaniAISpace
     }
     
     public enum ROOM{ MainHall, Hallway1, TopRightRoom}
+    public enum INTERACTABLE{ None, Ghost, Pickup, Human}
     
     public class HaniAI : BaseGhostAI
     {
@@ -30,6 +33,7 @@ namespace HaniAISpace
         private float speed;
 
         private STATE currentState;
+        private INTERACTABLE Interactable;
         private ABILITY currentAbility;
         private Vector3 targetRoomPos;
         private Rigidbody rb;
@@ -53,35 +57,8 @@ namespace HaniAISpace
        // Update is called once per frame
        void Update()
        {
-           /*if(rb.velocity.magnitude < 1.5f) //change state after colliding with human or getting a point maybe
-               currentState = STATE.Idle;*/
-           
+           CheckState();
            Debug.Log("HaniAI currentState = " + currentState);
-           //Debug.Log(targetRoomPos);
-           //Debug.Log(rb.velocity.magnitude);
-           //Mathf.Approximately(rb.velocity.magnitude, 0f)
-
-           /*if (carryingSouls >= 3)
-               DepositSouls();*/
-           if (currentState == STATE.Hunting && currentHuman == null)
-               currentState = STATE.Idle;
-           else if (currentState == STATE.Hunting && currentHuman != null && Vector3.Distance(transform.position, currentHuman.transform.position) >= 10f)
-               currentState = STATE.Idle;
-           else if (CheckHumanInfront() && currentState != STATE.SoulDeposit)
-           {
-               CancelInvoke();
-               // maybe only check when scouting or whatever so you can ignore them to deposit souls
-               ChaseHuman();
-           } 
-           else if (currentState == STATE.Idle)
-           {
-               CancelInvoke();
-               MoveToRandomPoint();
-               //// being called multiple times
-               //StartCoroutine(IdleLookAround());
-           }
-           else if (currentState == STATE.RoomChange && Vector3.Distance(transform.position, targetRoomPos) <= 1f)
-               currentState = STATE.Idle;
 
            //stuck in room change
        }
@@ -99,6 +76,36 @@ namespace HaniAISpace
                     break;
                 /*case 3: currentState = STATE.Idle;Debug.Log("idle");
                     break;*/
+            }
+        }
+
+        private void CheckState()
+        {
+            /*if (carryingSouls >= 3)
+               DepositSouls();*/
+           
+            
+            if (CheckObjectsInfront() == INTERACTABLE.Human && currentState != STATE.SoulDeposit)
+            {
+                //CancelInvoke();
+                ChaseHuman();
+            }
+            
+            switch (currentState)
+            {
+                case STATE.Hunting:
+                    if (currentHuman != null && Vector3.Distance(transform.position, currentHuman.transform.position) >= 10f)
+                        currentHuman = null;
+                    if (currentHuman == null)
+                        currentState = STATE.Idle;
+                    break;
+                
+                case STATE.RoomChange:
+                    if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
+                        currentState = STATE.Idle;
+                    break;
+                
+                case STATE.Idle: MoveToRandomPoint(); break;
             }
         }
         
@@ -139,7 +146,7 @@ namespace HaniAISpace
             currentState = STATE.RoomChange;
             targetRoomPos = rooms[randomNumber].GetPos();
             agent.SetDestination(targetRoomPos);
-            Invoke("MoveToRandomPoint", 5f);
+            //Invoke("MoveToRandomPoint", 5f);
             //Debug.Log(randomNumber);
         }
         
@@ -161,19 +168,31 @@ namespace HaniAISpace
             //Maybe needs a way to debug if the room exists
         }
         
-        protected bool CheckHumanInfront()
+        private INTERACTABLE CheckObjectsInfront()
         {
 
-            Collider[] objNearby = Physics.OverlapSphere(transform.position, 3, LayerMask.GetMask("Humans", "Walls")); // variable instead of hardcode
+            Collider[] objNearby = Physics.OverlapSphere(transform.position, 5f, LayerMask.GetMask("Humans", "Walls", "Pickups", "Ghosts")); // variable instead of hardcode
 
             GameObject nearestObject = CheckClosestObject(objNearby);
 
-            if (nearestObject != null && nearestObject.CompareTag("Human"))
+            if (nearestObject != null)
             {
-                currentHuman = nearestObject;
-                return true;
+                if (nearestObject.CompareTag("Human"))
+                {
+                    currentHuman = nearestObject;
+                    return INTERACTABLE.Human;
+                }
+                else if (nearestObject.CompareTag("Pickup"))
+                {
+                    return INTERACTABLE.Pickup;
+                }
+                else if (nearestObject.CompareTag("Ghost"))
+                {
+                    return INTERACTABLE.Ghost;
+                }
             }
-            return false;
+
+            return INTERACTABLE.None;
         }    
 
         protected void DepositSouls()
