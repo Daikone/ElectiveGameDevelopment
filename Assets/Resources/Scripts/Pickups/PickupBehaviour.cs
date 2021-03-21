@@ -1,17 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditorInternal;
 
 public class PickupBehaviour : MonoBehaviour
 {
     //create list of pickup types
-    private enum EType {Speed, Stun};
-    [SerializeField] EType Type;
+    public enum EType {Speed, Stun};
+    [SerializeField] public EType Type;
 
     private bool canStun = false;
+    private ParticleSystem particles;
+
+    void Start ()
+    {
+        particles = GetComponent<ParticleSystem>();
+    }
 
     //when pickup touches ghost, and ghost does not have pickup yet, add pickup to ghost
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (tag == "Pickup" && other.tag == "Ghost")
         {
@@ -23,6 +30,12 @@ public class PickupBehaviour : MonoBehaviour
                 ghostPickupBehavior = other.gameObject.AddComponent<PickupBehaviour>();
                 ghostPickupBehavior.Type = Type;
                 ghostBehaviour.hasPickup = true;
+
+                
+                ParticleSystem ghostParticles = other.gameObject.AddComponent<ParticleSystem>();
+                ghostParticles.Stop();
+                ComponentUtility.CopyComponent(particles);
+                ComponentUtility.PasteComponentValues(ghostParticles);
                 Destroy(gameObject);
             }
         }
@@ -45,11 +58,13 @@ public class PickupBehaviour : MonoBehaviour
         {
             case EType.Speed:
             {
+                particles.Play();
                 StartCoroutine(increaseSpeed());
                 break;
             }
             case EType.Stun:
             {
+                particles.Play();
                 canStun = true;
                 break;
             }
@@ -65,18 +80,25 @@ public class PickupBehaviour : MonoBehaviour
         ghostBehaviour.speed = 5;
         yield return new WaitForSeconds(5);
         ghostBehaviour.speed = initialSpeed;
+        ghostBehaviour.hasPickup = false;
+        ghostBehaviour.isPickupActive = false;
+        Destroy(particles);
         Destroy(this);
     }
 
     //get other ghost speed, set it to 0, after 5 seconds, set it back to intitial speed
     private IEnumerator stunOtherGhost(GameObject other)
     {
+        GhostBehaviour ghostBehaviour = GetComponent<GhostBehaviour>();
         GhostBehaviour otherGhostBehaviour = other.GetComponent<GhostBehaviour>();
         int initialSpeed = otherGhostBehaviour.speed;
 
         otherGhostBehaviour.speed = 0;
+        ghostBehaviour.hasPickup = false;
         yield return new WaitForSeconds(5);
         otherGhostBehaviour.speed = initialSpeed;
+        ghostBehaviour.isPickupActive = false;
+        Destroy(particles);
         Destroy(this);
     }
 }

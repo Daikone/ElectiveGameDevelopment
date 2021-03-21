@@ -11,6 +11,7 @@ using UnityEngine.AI;
 public class GhostBehaviour : BaseGhostAI
 {
     public bool hasPickup = false;
+    public bool isPickupActive = false;
     
     
     //   !!!!!!! Matti Stuff !!!!!!!!!
@@ -47,8 +48,11 @@ public class GhostBehaviour : BaseGhostAI
         //when ghost has pickup, activate it
         if (hasPickup)
         {
-            hasPickup = false;
-            GetComponent<PickupBehaviour>().usePickup();
+            if (!isPickupActive)
+            {
+                isPickupActive = true;
+                GetComponent<PickupBehaviour>().usePickup();
+            }
         }
 
         agent.speed = speed;
