@@ -23,6 +23,7 @@ namespace AlexAISpace
         public int ResetTimer;
         public bool haveWaited;
         public bool waiting;
+        public ParticleSystem Blood;
 
 
         //Statemachine var
@@ -42,7 +43,6 @@ namespace AlexAISpace
             ResetTimer = 0;
             haveWaited = false;
             waiting = false;
-
         }
 
         // Update is called once per frame
@@ -131,9 +131,7 @@ namespace AlexAISpace
                 direction.Normalize();
 
                 agent.SetDestination(currentHuman.transform.position);
-                //transform.Translate(direction * speed * Time.deltaTime);
                 transform.forward = new Vector3(direction.x, 0, direction.z);
-                //transform.LookAt(currentHuman.transform.position, Vector3.up); 
             } else
             {
                 currentState = STATE.Patrol;
@@ -145,10 +143,12 @@ namespace AlexAISpace
             //WIP
         }
         //play sound when hitted a human
-        private void OnCollisionExit(Collision col)
+        private void OnCollisionEnter(Collision collision)
         {
-            if (col.gameObject.CompareTag("Human"))
+         if(collision.gameObject.tag == "Human")
             {
+                Blood.Play();
+
             }
         }
 
