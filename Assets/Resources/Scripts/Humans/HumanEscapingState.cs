@@ -46,10 +46,11 @@ public class HumanEscapingState : BaseHumanBehaviour
       }
       
       
-      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 2)
+      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
       {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized) ;
+          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
           animator.SetBool("SeesGhost", false);
+          
       }
       
     }
