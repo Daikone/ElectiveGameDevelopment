@@ -29,15 +29,8 @@ namespace Resources.Scripts.Matti_AI
 
         }
 
-        public virtual void LogicUpdate()
-        {
-
-        }
-
-        public virtual void PhysicsUpdate()
-        {
-
-        }
+        public abstract void LogicUpdate();
+        
 
         public virtual void Exit()
         {
