@@ -27,31 +27,41 @@ public class HumanEscapingState : BaseHumanBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     { 
-        escapeDoor = Behaviour.closestDoor;
-       
-       
+        
+
+        if (Behaviour.closestGhost != null)
+        {
+            
+            if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
+            {
+                _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
+            }
+            else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 5)
+            {
+                _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
+                _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
+            }
+
+            if (escapeDoor != null)
+            {
+                if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
+                {
+                    _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
+                    animator.SetBool("SeesGhost", false);
+          
+                }
+            }
+            
+            
+            
+            
+        }
 
       // _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
        //_transform.forward += ghostAdjust;
        
       // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-      if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
-      {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
-      }
-      else
-      {
-          _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
-          _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
-      }
       
-      
-      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
-      {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
-          animator.SetBool("SeesGhost", false);
-          
-      }
       
     }
 

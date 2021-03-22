@@ -43,7 +43,7 @@ public class HumanIdleState : BaseHumanBehaviour
         
         
         //Checks for collisions
-        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1))
+        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1.5f))
         {
             _transform.forward = Vector3.Reflect(_transform.forward, hit.normal);
         }
@@ -51,7 +51,7 @@ public class HumanIdleState : BaseHumanBehaviour
         //anti fly away
         _transform.localEulerAngles = new Vector3(0f,_transform.localEulerAngles.y,0f);
 
-        _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
+        _navAgent.SetDestination(_transform.position + _transform.forward.normalized*0.5f);
        // _transform.position += _transform.forward * (speed * Time.deltaTime);
         
         
