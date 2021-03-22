@@ -15,8 +15,6 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
 
     [HideInInspector]
     public GameObject closestDoor;
-    [HideInInspector] 
-    public GameObject secondClosestDoor;
     [HideInInspector]
     public GameObject closestGhost;
     
@@ -43,19 +41,6 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
             {
                 closestDoor = ClosestObjectInList(animator.gameObject, DoorsInSight);
             }
-            List<GameObject> secondClosestDoors = new List<GameObject>();
-            foreach (var door in DoorsInSight)
-            {
-                if (door != closestDoor)
-                {
-                    secondClosestDoors.Add(door);
-                }
-            }
-
-            if (secondClosestDoors.Count > 0)
-            {
-                secondClosestDoor = ClosestObjectInList(animator.gameObject, secondClosestDoors);
-            }
             
             Debug.DrawLine(_transform.position, calculateDoorOffset(closestDoor), Color.blue);
         }
@@ -64,6 +49,10 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         {
             closestGhost = ClosestObjectInList(animator.gameObject, GhostsInSight);
             Debug.DrawLine(_transform.position, closestGhost.transform.position, Color.red);
+        }
+        else
+        {
+            closestGhost = null;
         }
         
         //Behaviour Switches
