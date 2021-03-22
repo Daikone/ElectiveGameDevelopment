@@ -11,53 +11,68 @@ public class CameraAI : MonoBehaviour
     private Collider[] currentMaxCollider;
     private Vector3 offset;
 
+    private Collider[][] colliderlistList;
+
     private List<float> heatMap;
 
     private void Start()
     {
         heatMap = new List<float>();
-        offset = new Vector3(-28, 0, -11);
+        offset = new Vector3(0f, 1f, -15.25f);
         
         gridCheckX = new List<Collider[]>();
         gridCheckY = new List<List<Collider[]>>();
-
-        for (int y = 4; y <= 28; y += 8)
+        
+        for (int y = 0; y >= -24; y -= 8)
         {
-            for (int x = 4; x <= 28; x += 8)
+            for (int x = 0; x >= -24; x -= 8)
             {
                 //Debug.Log("BOX1");
-                gridCheckX.Add(Physics.OverlapBox(new Vector3(x, 1, y) + offset, new Vector3(4, 1, 4), Quaternion.identity, LayerMask.GetMask("Humans", "Walls", "Ghosts")));
+                gridCheckX.Add(Physics.OverlapBox(new Vector3(x, 0, y) + offset, new Vector3(4, 1, 4), Quaternion.identity, LayerMask.GetMask("Humans", "Ghosts")));
                 //0,1,-15.25
                 
                 //-24,1,-39.25
             }
-            //Debug.Log("BOXout");
-            gridCheckY.Add(gridCheckX);
-            gridCheckX.Clear();
         }
-        
-        
+
+        for (int i = 0; i < 4; i++)
+        {
+            List<Collider[]> tempList = new List<Collider[]>();
+            tempList = gridCheckX.GetRange(i, i + 3);
+            gridCheckY.Add(tempList);
+        }
     }
     
     void Update()
     {
-        foreach (var boxes in gridCheckY)
+        /*foreach (var boxes in gridCheckY)
         {
             //Debug.Log("List in list");
-            foreach (var coll in boxes)
+            /*foreach (var coll in boxes)
             {
                 //Debug.Log("Colliders in List");
                 heatMap.Add(coll.Length);
-            }
-        }
-        foreach (var value in heatMap)
+                Debug.Log(coll. + " has " + coll.Length);
+            }#1#
+        }*/
+        
+        /*for (int y = 0; y >= -24; y -= 8)
         {
-            int i = 1;
-            Debug.Log(i + " has " + value);
-            i++;
-        }
-        heatMap.Clear();
-        Debug.Log("TopLeft1: " + heatMap.Count);
+            for (int x = 0; x >= -24; x -= 8)
+            {
+                gridCheckX.Add(Physics.OverlapBox(new Vector3(x, 0, y) + offset, new Vector3(4, 1, 4), Quaternion.identity, LayerMask.GetMask("Humans", "Ghosts")));
+            }
+        }*/
+        
+        //Debug.Log("Listboxes: " + gridCheckX.Count);
+        //Debug.Log("List " + gridCheckY.Count);
+        
+       
+        
+        /*for (int j = 0; j < gridCheckX.Count; j++)
+        {
+            Debug.Log((j+1) + " has " + gridCheckX[j].Length);
+        }*/
     }
 }
     
