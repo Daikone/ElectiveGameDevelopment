@@ -22,15 +22,15 @@ public class PickupBehaviour : MonoBehaviour
     {
         if (tag == "Pickup" && other.tag == "Ghost")
         {
-            PickupBehaviour ghostPickupBehavior = other.GetComponent<PickupBehaviour>();
+            PickupBehaviour ghostPickupBehavior = other.gameObject.GetComponent<PickupBehaviour>();
+            GhostBehaviour ghostBehaviour = other.gameObject.GetComponent<GhostBehaviour>();
 
-            if (ghostPickupBehavior == null)
+            if (ghostPickupBehavior == null && ghostBehaviour != null)
             {
-                GhostBehaviour ghostBehaviour = other.GetComponent<GhostBehaviour>();
                 ghostPickupBehavior = other.gameObject.AddComponent<PickupBehaviour>();
                 ghostPickupBehavior.Type = Type;
                 ghostBehaviour.hasPickup = true;
-
+                
                 
                 ParticleSystem ghostParticles = other.gameObject.AddComponent<ParticleSystem>();
                 ghostParticles.Stop();

@@ -23,6 +23,10 @@ namespace AlexAISpace
         public int ResetTimer;
         public bool haveWaited;
         public bool waiting;
+        //public ParticleSystem Blood;
+        public float SoulsOnMe;
+
+        public GameObject BloodPrefab;
 
 
         //Statemachine var
@@ -38,26 +42,23 @@ namespace AlexAISpace
             agent.speed = GetSpeed();
             //currentAbility = ABILITY.none;
             currentState = STATE.Patrol;
-
             ResetTimer = 0;
             haveWaited = false;
             waiting = false;
-
         }
 
         // Update is called once per frame
         void Update()
         {
-            //if AI gets stuck wait a bit and get a new location
+            //SoulsOnMe = getSouls();
+            //Need to get souls every frame to keep up to date 
+            //Debug.Log();
 
-            //maybe an if(Souls = x) go dunk then an else if
-            if (CheckHumanInfront()) // maybe only check when scouting or whatever so you can ignore them to deposit souls
+            if (CheckHumanInfront())
                 ChaseHuman();
             else if (currentState == STATE.Patrol)
             {
                 Patrolling();
-/*                newLocation = false;
-                newLocationTimer = true;*/
             }
 
             if (haveWaited == false)
@@ -93,14 +94,9 @@ namespace AlexAISpace
         //Timer Functions to stop spamming
         protected IEnumerator WaitForReset()
         {
-             Debug.Log("waiting has started");
-             yield return new WaitForSeconds(5);
-        }
-        protected IEnumerator WaitForNewLocation()
-        {
-            yield return new WaitForSeconds(2);
-            Debug.Log("given new location");
-
+            Debug.Log("waiting has started");
+            yield return new WaitForSeconds(5);
+            haveWaited = true;
         }
 
 
@@ -131,12 +127,7 @@ namespace AlexAISpace
                 direction.Normalize();
 
                 agent.SetDestination(currentHuman.transform.position);
-                //transform.Translate(direction * speed * Time.deltaTime);
                 transform.forward = new Vector3(direction.x, 0, direction.z);
-                //transform.LookAt(currentHuman.transform.position, Vector3.up); 
-            } else
-            {
-                currentState = STATE.Patrol;
             }
         }
         //Dunking souls
@@ -145,10 +136,15 @@ namespace AlexAISpace
             //WIP
         }
         //play sound when hitted a human
-        private void OnCollisionExit(Collision col)
+        private void OnCollisionEnter(Collision collision)
         {
-            if (col.gameObject.CompareTag("Human"))
+            if (collision.gameObject.tag == "Human")
             {
+                currentState = STATE.Patrol;
+
+                Instantiate(BloodPrefab, transform.position, Quaternion.identity);
+
+
             }
         }
 
