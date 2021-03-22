@@ -23,8 +23,10 @@ namespace AlexAISpace
         public int ResetTimer;
         public bool haveWaited;
         public bool waiting;
-        public ParticleSystem Blood;
+        //public ParticleSystem Blood;
         public float SoulsOnMe;
+
+        public GameObject BloodPrefab;
 
 
         //Statemachine var
@@ -51,7 +53,7 @@ namespace AlexAISpace
             //SoulsOnMe = getSouls();
             //Need to get souls every frame to keep up to date 
             //Debug.Log();
-            
+
             if (CheckHumanInfront())
                 ChaseHuman();
             else if (currentState == STATE.Patrol)
@@ -92,8 +94,9 @@ namespace AlexAISpace
         //Timer Functions to stop spamming
         protected IEnumerator WaitForReset()
         {
-             Debug.Log("waiting has started");
-             yield return new WaitForSeconds(5);
+            Debug.Log("waiting has started");
+            yield return new WaitForSeconds(5);
+            haveWaited = true;
         }
 
 
@@ -125,9 +128,6 @@ namespace AlexAISpace
 
                 agent.SetDestination(currentHuman.transform.position);
                 transform.forward = new Vector3(direction.x, 0, direction.z);
-            } else
-            {
-                currentState = STATE.Patrol;
             }
         }
         //Dunking souls
@@ -138,9 +138,12 @@ namespace AlexAISpace
         //play sound when hitted a human
         private void OnCollisionEnter(Collision collision)
         {
-         if(collision.gameObject.tag == "Human")
+            if (collision.gameObject.tag == "Human")
             {
-                Blood.Play();
+                currentState = STATE.Patrol;
+
+                Instantiate(BloodPrefab, transform.position, Quaternion.identity);
+
 
             }
         }

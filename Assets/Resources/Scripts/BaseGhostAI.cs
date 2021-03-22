@@ -10,18 +10,10 @@ public class BaseGhostAI : MonoBehaviour
     public NavMeshAgent agent;
 
     protected bool isStunned;
-    protected float carryingSouls;
+    public float carryingSouls;
     private static int NORMALSPEED = 4;
     
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Human"))
-        {
-            carryingSouls++;
-            Destroy(other.gameObject);
-        }
-    }
-
+    
     public int GetSpeed()
     {
         return NORMALSPEED;
@@ -84,6 +76,20 @@ public class BaseGhostAI : MonoBehaviour
                     }
                 }
             
+        }
+        return objectsInRange;
+    }
+    /// Checks for objects within a certain radius, returns a list with these GameObjects 
+    /// <param name="self">GameObject from which the function should be executed </param>
+    /// <param name="radius">Radius in which to check </param>
+    /// <param name="layerMask">Layermask to only find objects on a certain layer, for example: doors </param>
+    protected List<GameObject> CheckCloseObjects(GameObject self, float radius, LayerMask layerMask)
+    {
+        List<GameObject> objectsInRange = new List<GameObject>();
+        Collider[] colliders = Physics.OverlapSphere(self.transform.position, radius, layerMask );
+        foreach (var collider in colliders)
+        {
+            objectsInRange.Add(collider.gameObject);
         }
         return objectsInRange;
     }

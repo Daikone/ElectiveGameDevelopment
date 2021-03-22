@@ -43,9 +43,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DoorsInSight: []
   GhostsInSight: []
-  GhostSpottingDistance: 19.2
+  GhostSpottingDistance: 10.37
   closestDoor: {fileID: 0}
-  secondClosestDoor: {fileID: 0}
   closestGhost: {fileID: 0}
   DoorLayerCheck:
     serializedVersion: 2
@@ -165,9 +164,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DoorsInSight: []
   GhostsInSight: []
-  GhostSpottingDistance: 16.47
+  GhostSpottingDistance: 9
   closestDoor: {fileID: 0}
-  secondClosestDoor: {fileID: 0}
   closestGhost: {fileID: 0}
   DoorLayerCheck:
     serializedVersion: 2

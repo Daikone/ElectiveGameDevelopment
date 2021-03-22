@@ -7,24 +7,34 @@ using UnityEngine.AI;
 public class EsmeGhostAi : MonoBehaviour
 {
     enum EState { patrolling, attackHuman, attackGhost, depositSouls, getPickup }
+
     [SerializeField] private EState _state = EState.patrolling;
     private Vector3 patrolPosition;
+    private Vector3 cauldronPosition;
+    private Vector3 eyesPosition;
+    private List<Collider> OthersColliders = new List<Collider>();
+    private GhostBehaviour ghostBehaviour;
+    private NavMeshAgent navMeshAgent;
 
-    List<Collider> OthersColliders = new List<Collider>();
+    [SerializeField] public bool ShowDebugLines;
 
-    GhostBehaviour ghostBehaviour;
-    NavMeshAgent navMeshAgent;
+    [SerializeField] private float souls;
 
     void Start ()
     {
         ghostBehaviour = gameObject.GetComponent<GhostBehaviour>();
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        if (NavMesh.SamplePosition(GameObject.Find("Cauldron").transform.position, out NavMeshHit hit, 1.0f, 1))
+        {
+            cauldronPosition = hit.position;
+        }
     }
 
-    // Update is called once per frame
     void Update ()
-    {  
-        detecting();
+    {
+        souls = ghostBehaviour.getSouls();
+        detectingOthersColliders();
+        selectGhostState();
     
         switch (_state)
         {
@@ -33,34 +43,53 @@ public class EsmeGhostAi : MonoBehaviour
                 patrolling();
                 break;
             }
-            case EState.attackHuman:
-            {
-                attackHuman();
-                break;
-            }
             case EState.getPickup:
             {
                 getPickup();
                 break;
             }
-        }
-    }
-
-    void detecting ()
-    {
-        Collider[] collidersInRadius = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
-        OthersColliders = new List<Collider>();
-
-        foreach (Collider collider in collidersInRadius)
-        {
-            if (!Physics.Linecast(transform.position, collider.transform.position, LayerMask.GetMask("Walls"))) 
+            case EState.attackHuman:
             {
-                OthersColliders.Add(collider);
-                // Debug.DrawLine(transform.position, collider.transform.position, Color.cyan);
+                attackHuman();
+                break;
+            }
+            case EState.attackGhost:
+            {
+                attackGhost();
+                break;
+            }
+            case EState.depositSouls:
+            {
+                depositSouls();
+                break;
             }
         }
 
-        OthersColliders.OrderByDescending(collider => Vector3.Distance(collider.transform.position, transform.position));
+        showDebugLines();
+    }
+
+    void detectingOthersColliders ()
+    {
+        eyesPosition = transform.position + new Vector3(0, 1, 0);
+        Collider[] othersCollidersInRadius = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
+        OthersColliders = new List<Collider>();
+
+        foreach (Collider otherCollider in othersCollidersInRadius)
+        {
+            if (!Physics.Linecast(eyesPosition, otherCollider.transform.position, LayerMask.GetMask("Walls"))) 
+            {
+                OthersColliders.Add(otherCollider);
+            }
+        }
+
+        OthersColliders = OthersColliders.OrderBy(otherCollider => Vector3.Distance(otherCollider.transform.position, transform.position)).ToList();
+    }
+
+    void selectGhostState () {
+        // if (ghostBehaviour.getSouls() >= 5) {
+        //     _state = EState.depositSouls;
+        //     return;
+        // }
 
         if (OthersColliders.Count > 0)
         {
@@ -72,6 +101,10 @@ public class EsmeGhostAi : MonoBehaviour
                     {
                         _state = EState.getPickup;
                     }
+                    else
+                    {
+                        _state = EState.patrolling;
+                    }
                     break;
                 }
                 case "Human":
@@ -79,11 +112,18 @@ public class EsmeGhostAi : MonoBehaviour
                     _state = EState.attackHuman;
                     break;
                 }
-                // case "Ghost":
-                // {
-                //     _state = EState.attackGhost;
-                //     break;
-                // }
+                case "Ghost":
+                {
+                    if (ghostBehaviour.hasPickup && (int)GetComponent<PickupBehaviour>().Type == 1)
+                    {
+                        _state = EState.attackGhost;
+                    }
+                    else
+                    {
+                        _state = EState.patrolling;
+                    }
+                    break;
+                }
             }
         }
         else
@@ -93,30 +133,59 @@ public class EsmeGhostAi : MonoBehaviour
     }
 
     void patrolling () {
-        if (navMeshAgent.destination == patrolPosition || patrolPosition == new Vector3()) {
-            if (NavMesh.SamplePosition(new Vector3(Random.Range(-16, 16), 0, Random.Range(-16, 16)), out NavMeshHit hit, 1.0f, 1))
+        if (transform.position == patrolPosition || navMeshAgent.destination != patrolPosition || patrolPosition == new Vector3()) {
+            if (NavMesh.SamplePosition(new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20)) + transform.position, out NavMeshHit hit, 1.0f, 1))
             {
                 patrolPosition = hit.position;
-                navMeshAgent.destination = patrolPosition;
             }
         }
-        Debug.DrawLine(transform.position, patrolPosition, Color.magenta);
+
+        navMeshAgent.destination = patrolPosition;
     }
 
     void getPickup ()
     {
-        patrolPosition = new Vector3();
         navMeshAgent.destination = OthersColliders[0].transform.position;
-        Debug.DrawLine(transform.position, OthersColliders[0].transform.position, Color.green);
     }
 
     void attackHuman ()
     {
-        patrolPosition = new Vector3();
-        if (OthersColliders.Count > 0)
+        navMeshAgent.destination = OthersColliders[0].transform.position;
+    }
+
+    void attackGhost ()
+    {
+        navMeshAgent.destination = OthersColliders[0].transform.position;
+    }
+
+    void depositSouls ()
+    {
+        navMeshAgent.destination = cauldronPosition;
+    }
+
+    void showDebugLines ()
+    {
+        if (ShowDebugLines)
         {
-            navMeshAgent.destination = OthersColliders[0].transform.position;
-            Debug.DrawLine(transform.position, OthersColliders[0].transform.position, Color.red);
+            switch (_state)
+            {
+                case EState.patrolling:
+                {
+                    Debug.DrawLine(eyesPosition, patrolPosition, Color.magenta);
+                    break;
+                }
+                case EState.attackHuman:
+                {
+                    Debug.DrawLine(eyesPosition, OthersColliders[0].transform.position, Color.red);
+                    break;
+                }
+                case EState.getPickup:
+                {
+                    Debug.DrawLine(eyesPosition, OthersColliders[0].transform.position, Color.green);
+                    break;
+                }
+            }
         }
     }
 }
+
