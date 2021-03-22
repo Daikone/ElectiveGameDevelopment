@@ -10,7 +10,7 @@ public class BaseGhostAI : MonoBehaviour
     public NavMeshAgent agent;
 
     protected bool isStunned;
-    protected float carryingSouls;
+    public float carryingSouls;
     private static int NORMALSPEED = 4;
     
     

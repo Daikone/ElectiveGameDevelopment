@@ -11,6 +11,9 @@ namespace Resources.Scripts.Matti_AI
         private StateMachine _stateMachine;
         public IdleState _idleState;
         public ChaseState _chaseState;
+        public SaveSoulsState _saveSoulsState;
+
+        public GhostBehaviour behaviour;
 
         [HideInInspector]
         public List<GameObject> HumansInSight = new List<GameObject>();
@@ -30,6 +33,8 @@ namespace Resources.Scripts.Matti_AI
 
 
         public List<GameObject> PreviousDoors = new List<GameObject>();
+
+        [HideInInspector] public GameObject cauldron;
         
         
 
@@ -39,7 +44,11 @@ namespace Resources.Scripts.Matti_AI
             _stateMachine = new StateMachine(gameObject);
             _idleState = new IdleState(_stateMachine);
             _chaseState = new ChaseState(_stateMachine);
+            _saveSoulsState = new SaveSoulsState(_stateMachine);
             _stateMachine.Initialize(_idleState);
+
+            behaviour = GetComponent<GhostBehaviour>();
+            cauldron = GameObject.Find("Cauldron");
         }
 
         // Update is called once per frame
