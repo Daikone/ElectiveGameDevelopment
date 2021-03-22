@@ -26,13 +26,21 @@ public class CameraAI : MonoBehaviour
             for (int x = 4; x <= 28; x += 8)
             {
                 //Debug.Log("BOX1");
-                gridCheckX.Add(Physics.OverlapBox(new Vector3(x, 0, y) + offset, new Vector3(x - 4f, 0, y + 4f) + offset, Quaternion.identity, LayerMask.GetMask("Humans", "Walls", "Ghosts")));
+                gridCheckX.Add(Physics.OverlapBox(new Vector3(x, 1, y) + offset, new Vector3(4, 1, 4), Quaternion.identity, LayerMask.GetMask("Humans", "Walls", "Ghosts")));
+                //0,1,-15.25
+                
+                //-24,1,-39.25
             }
             //Debug.Log("BOXout");
             gridCheckY.Add(gridCheckX);
             gridCheckX.Clear();
         }
         
+        
+    }
+    
+    void Update()
+    {
         foreach (var boxes in gridCheckY)
         {
             //Debug.Log("List in list");
@@ -42,18 +50,14 @@ public class CameraAI : MonoBehaviour
                 heatMap.Add(coll.Length);
             }
         }
-    }
-    
-    void Update()
-    {
         foreach (var value in heatMap)
         {
             int i = 1;
-            //Debug.Log(i + " has " + value);
+            Debug.Log(i + " has " + value);
             i++;
         }
         heatMap.Clear();
-        //Debug.Log("TopLeft1: " + heatMap.Count);
+        Debug.Log("TopLeft1: " + heatMap.Count);
     }
 }
     

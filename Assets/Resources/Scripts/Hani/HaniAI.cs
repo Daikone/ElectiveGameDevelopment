@@ -63,7 +63,8 @@ namespace HaniAISpace
                         ChaseHuman();
                         break;
                 
-                    case INTERACTABLE.Pickup: /*ChaseHuman();
+                    case INTERACTABLE.Pickup: ChaseHuman();
+                        break;/*ChaseHuman();
                         break;*/
                     
                     case INTERACTABLE.Ghost: //ChaseHuman();
