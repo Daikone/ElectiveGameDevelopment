@@ -18,7 +18,7 @@ public class CauldronScript : MonoBehaviour
         if (ghost.CompareTag("Ghost"))
         {
            
-            gameManager.ghostScores[System.Array.IndexOf(gameManager.playerNames, ghost.GetComponent<GhostBehaviour>().YourName)] = ghost.GetComponent<GhostBehaviour>().getSouls();
+            gameManager.ghostScores[Array.IndexOf(gameManager.playerNames, ghost.GetComponent<GhostBehaviour>().YourName)] = ghost.GetComponent<GhostBehaviour>().getSouls();
             ghost.GetComponent<GhostBehaviour>().carryingSouls = 0;
         }
     }
