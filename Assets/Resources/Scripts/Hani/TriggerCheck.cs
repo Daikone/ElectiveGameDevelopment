@@ -54,6 +54,7 @@ public class TriggerCheck : MonoBehaviour
         if (followObject != null && followNewObject == true)
         {
             float offsetDistance = 2.5f;
+            Camera camerComp = GetComponent<Camera>();
             
             RaycastHit hit;
             if (Physics.Raycast(transform.position, followObject.transform.position, out hit, 5f, LayerMask.GetMask("Walls")))
@@ -62,11 +63,13 @@ public class TriggerCheck : MonoBehaviour
                 //transform.Rotate(newRot);
                 transform.rotation = Quaternion.Euler(30, followObject.transform.eulerAngles.y, 0);
                 offsetDistance = 1.5f;
+                camerComp.fieldOfView = 90;
             }
             else
             {
                 offsetDistance = 2.5f;
                 transform.LookAt(followObject.transform);
+                camerComp.fieldOfView = 60;
             }
             
             //transform.position
