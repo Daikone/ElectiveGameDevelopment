@@ -21,12 +21,13 @@ namespace AlexAISpace
         private GameObject currentHuman;
         private Vector3 PatrolDestination;
         public int ResetTimer;
-        public bool haveWaited;
-        public bool waiting;
-        //public ParticleSystem Blood;
-        public float SoulsOnMe;
 
+        private bool arrived;
+        private Vector3 NewLocationForAI;
+        public int StopHuntingTimer;
         public GameObject BloodPrefab;
+        public GameObject Cauldren;
+        public int SoulsOnMe;
 
 
         //Statemachine var
@@ -42,68 +43,76 @@ namespace AlexAISpace
             agent.speed = GetSpeed();
             //currentAbility = ABILITY.none;
             currentState = STATE.Patrol;
-            ResetTimer = 0;
-            haveWaited = false;
-            waiting = false;
+            arrived = true;
+            NewLocationForAI = new Vector3(0,0,0);
+
         }
 
         // Update is called once per frame
         void Update()
         {
-            //SoulsOnMe = getSouls();
-            //Need to get souls every frame to keep up to date 
-            //Debug.Log();
-
-            if (CheckHumanInfront())
-                ChaseHuman();
-            else if (currentState == STATE.Patrol)
+            if(SoulsOnMe >= 3)
+                DunkSouls();
+            //else if (CheckHumanInfront())
+              //  ChaseHuman();
+            else if (currentState == STATE.Patrol && arrived == true)//Arrived is to make sure that it does not keep firing 24/7 and cause a huge preformance cost
             {
                 Patrolling();
             }
-
-            if (haveWaited == false)
+            if(agent.transform.position == NewLocationForAI)
             {
-                WaitForReset();
+                arrived = true;
             }
+           
         }
 
-        void Patrolling()
+        private void FixedUpdate()
         {
-            if (agent.destination == PatrolDestination || PatrolDestination == new Vector3())
+            //This is a reset system to prevent the agent from buggin out if was not able to go to a destination set by Patrolling
+            if (currentState == STATE.Patrol)
             {
-                if (NavMesh.SamplePosition(new Vector3(Random.Range(-12, 12), 0, Random.Range(-12, 12)), out NavMeshHit EndLocation, 1.0f, 1))
+                ResetTimer++;
+                if (NewLocationForAI != agent.transform.position)
                 {
-                    PatrolDestination = EndLocation.position;
-                    agent.destination = PatrolDestination;
-                    Debug.Log("New location added");
-
-                    //if het gets stuck well reset the path and timer
-                    if (haveWaited == true)
+                    if (ResetTimer >= (6 * 60))
                     {
-                        if (agent.destination == EndLocation.position || ResetTimer >= 400000)
-                        {
-                            ResetTimer = 0;
-                            agent.ResetPath();
-                            Debug.Log("Path reseted");
-                            haveWaited = false;
-                        }
+                        arrived = true;
+                        Debug.Log("reseted death");
+                        ResetTimer = 0;
                     }
                 }
+                else
+                {
+                    //reset the timer if agent is at the location
+                    ResetTimer = 0;
+                    Debug.Log("Not Needed to reset");
+                }
             }
+            else
+            {
+                ResetTimer = 0;
+            }
+            
         }
-        //Timer Functions to stop spamming
-        protected IEnumerator WaitForReset()
-        {
-            Debug.Log("waiting has started");
-            yield return new WaitForSeconds(5);
-            haveWaited = true;
+        void Patrolling()
+        { 
+                if (agent.destination == PatrolDestination || PatrolDestination == new Vector3())
+                {
+                    if (NavMesh.SamplePosition(new Vector3(Random.Range(-16, 16), 0, Random.Range(-16, 16)) + transform.position, out NavMeshHit EndLocation, 1.0f, NavMesh.AllAreas))
+                    {
+                        PatrolDestination = EndLocation.position;
+                        agent.destination = PatrolDestination;
+                        NewLocationForAI = PatrolDestination;
+                        Debug.Log("New location added");
+                        arrived = false;
+                    }
+                }
         }
 
 
         //Human Hunter system
         protected bool CheckHumanInfront()
         {
-            //currentState = STATE.Scanning;
 
             Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3);
 
@@ -119,21 +128,17 @@ namespace AlexAISpace
         }
         protected void ChaseHuman()
         {
-            currentState = STATE.Hunting;
-            if (currentHuman != null)
-            {
-                //Debug.Log("human not nul");
-                Vector3 direction = currentHuman.transform.position - transform.position;
-                direction.Normalize();
-
-                agent.SetDestination(currentHuman.transform.position);
-                transform.forward = new Vector3(direction.x, 0, direction.z);
+                currentState = STATE.Hunting;
+                if (currentHuman != null)
+                {
+                    agent.SetDestination(currentHuman.transform.position);
+                }
             }
-        }
         //Dunking souls
-        protected void DepositSouls()
+        protected void DunkSouls()
         {
-            //WIP
+            currentState = STATE.Dunking;
+            agent.SetDestination(Cauldren.transform.position);
         }
         //play sound when hitted a human
         private void OnCollisionEnter(Collision collision)
@@ -141,9 +146,23 @@ namespace AlexAISpace
             if (collision.gameObject.tag == "Human")
             {
                 currentState = STATE.Patrol;
+                arrived = true;
+                SoulsOnMe ++;
 
                 Instantiate(BloodPrefab, transform.position, Quaternion.identity);
 
+
+            }
+            //if dunked go back to patrol
+            else if(collision.gameObject.tag == "Cauldron")
+            {
+                if (SoulsOnMe >= 3)
+                {
+                    SoulsOnMe = 0;
+                    currentState = STATE.Patrol;
+                    agent.ResetPath();
+                    arrived = true;
+                }
 
             }
         }
