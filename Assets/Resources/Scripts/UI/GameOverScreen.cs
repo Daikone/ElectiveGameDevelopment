@@ -10,14 +10,20 @@ public class GameOverScreen : MonoBehaviour
     public GameManager gameManager;
     public bool manualGameOver;
     private CanvasGroup _canvasGroup;
-    private TextMeshProUGUI _winnerName;
+    private bool isblending = false;
+    
+    public TextMeshProUGUI[] winningNames;
+   
+    
+    public TextMeshProUGUI[] winningScores;
+    
     
 
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 0;
-        _winnerName = transform.Find("Winner").GetComponent<TextMeshProUGUI>();
+        
     }
 
     private void Update()
@@ -32,27 +38,53 @@ public class GameOverScreen : MonoBehaviour
             gameOver();
             manualGameOver = false;
         }
+
+        if (isblending && _canvasGroup.alpha < 1)
+        {
+            _canvasGroup.alpha += Time.deltaTime;
+        }
+
+        if (_canvasGroup.alpha >= 1)
+        {
+            stopGame();
+        }
+        
+        
     }
 
     private void gameOver()
     {
-         KeyValuePair<string, float> winnerScore = new KeyValuePair<string, float>();
-        float firstScore = 0;
-        float secondScore = 0;
-        float thirdScore = 0;
-        foreach (var pair in gameManager.ScoreBoard)
+        //extremely clunky and terribly written mechanic to sort a dictionary but I kinda ran out of time  
+        
+        Stack<KeyValuePair<string, float>> dictionaryStack = new Stack<KeyValuePair<string, float>>();
+        
+        int valueCount = 0;
+        foreach (var pair in gameManager.ScoreBoard.OrderBy(key => key.Value))
         {
-            if (pair.Value > firstScore)
+            if (valueCount >= gameManager.ScoreBoard.Count -winningNames.Length)
             {
-                firstScore = pair.Value;
-                winnerScore = pair;
-                
+                dictionaryStack.Push(pair);
+                Debug.Log(dictionaryStack.Count);
             }
-        }
-        
-        
-        _winnerName.text = winnerScore.Key;
 
-        _canvasGroup.alpha = 1;
+            valueCount++;
+        }
+
+        for (int i = 0; i < winningNames.Length; i++)
+        {
+            KeyValuePair<string, float> pair = new KeyValuePair<string, float>();
+            pair = dictionaryStack.Pop();
+            winningNames[i].text = pair.Key;
+            winningScores[i].text = pair.Value.ToString();
+        }
+
+        isblending = true;
+
+
+    }
+
+    void stopGame()
+    {
+        Time.timeScale = 0;
     }
 }
