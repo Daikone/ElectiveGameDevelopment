@@ -22,6 +22,9 @@ namespace Resources.Scripts.Matti_AI
             baseAI.PreviousDoors.Clear();
         }
 
+        
+        
+        
         // ReSharper disable Unity.PerformanceAnalysis
         public override void LogicUpdate()
         {
