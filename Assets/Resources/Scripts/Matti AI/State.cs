@@ -17,6 +17,8 @@ namespace Resources.Scripts.Matti_AI
             baseAI = sm.owner.GetComponent<MattiBaseAI>();
 
         }
+
+        
         
         
         public virtual void Enter()
