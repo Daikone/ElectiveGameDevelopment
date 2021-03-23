@@ -41,7 +41,12 @@ public class GameOverScreen : MonoBehaviour
 
         if (isblending && _canvasGroup.alpha < 1)
         {
-            _canvasGroup.alpha += Time.deltaTime;
+            _canvasGroup.alpha += Time.deltaTime*0.9f;
+            if (!GetComponent<AudioSource>().isPlaying)
+            {
+                GetComponent<AudioSource>().Play();
+            }
+            
         }
 
         if (_canvasGroup.alpha >= 1)
