@@ -69,7 +69,6 @@ public class GameOverScreen : MonoBehaviour
             if (valueCount >= gameManager.ScoreBoard.Count -winningNames.Length)
             {
                 dictionaryStack.Push(pair);
-                Debug.Log(dictionaryStack.Count);
             }
 
             valueCount++;

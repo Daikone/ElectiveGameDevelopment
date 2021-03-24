@@ -31,10 +31,12 @@ namespace Resources.Scripts.Matti_AI
             timeInState += Time.deltaTime;
             
             
+            
             if (baseAI.HumansInSight.Count > 0)
             {
                 baseAI.agent.SetDestination(baseAI.closestHuman.transform.position);
             }
+            //going to the last position of seen human
             else if (baseAI.HumansInSight.Count == 0)
             {
                 if (!_isGoingForPos)
@@ -43,7 +45,7 @@ namespace Resources.Scripts.Matti_AI
                     _isGoingForPos = true;
                 }
 
-                if (timeInState - _timeWhenOutOfSight <= 3)
+                if (timeInState - _timeWhenOutOfSight <= 1)
                 {
                     baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
                 }
@@ -53,11 +55,13 @@ namespace Resources.Scripts.Matti_AI
                     _timeWhenOutOfSight = 0;
                 }
             }
-            else
+            if(baseAI.HumansInSight.Count== 0 && !_isGoingForPos )
             {
                 stateMachine.ChangeState(baseAI._idleState);
             }
+            
         }
+        
     }
 }
 

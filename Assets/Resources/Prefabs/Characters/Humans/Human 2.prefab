@@ -192,6 +192,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 100166, guid: 3cefbbfe8c81fbb4283daa116169ef21, type: 3}
+      propertyPath: m_TagString
+      value: Human
+      objectReference: {fileID: 0}
     - target: {fileID: 100168, guid: 3cefbbfe8c81fbb4283daa116169ef21, type: 3}
       propertyPath: m_Layer
       value: 11

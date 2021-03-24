@@ -11,6 +11,7 @@ public class HumanEscapingState : BaseHumanBehaviour
     public float ghostAvoidanceDistance;
     public float speed;
     private NavMeshAgent _navAgent;
+    private Vector3 _destination;
 
     private GameObject escapeDoor;
     
@@ -34,27 +35,34 @@ public class HumanEscapingState : BaseHumanBehaviour
             
             if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
             {
-                _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
+               _destination = calculateDoorOffset(escapeDoor);
             }
-            else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 5)
+            else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 3)
             {
                 _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
-                _navAgent.SetDestination(_transform.position + _transform.forward.normalized);
+                _destination = _transform.position + _transform.forward.normalized;
+                
+                // prevents getting stuck in corners
+                if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1.5f))
+                {
+                    _transform.forward = Vector3.Reflect(_transform.forward, hit.normal);
+                        _destination = _transform.position + _transform.forward.normalized;
+                }
             }
 
             if (escapeDoor != null)
             {
                 if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
                 {
-                    _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
+                    _destination = calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2 ;
                     animator.SetBool("SeesGhost", false);
           
                 }
             }
-            
-            
-            
-            
+
+
+            _navAgent.SetDestination(_destination);
+
         }
 
       // _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
