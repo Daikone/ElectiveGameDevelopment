@@ -34,13 +34,13 @@ namespace HaniAISpace
        void Update()
        {
            CheckState();
-           //Debug.Log("HaniAI currentState = " + currentState);
+           Debug.Log("HaniAI currentState = " + currentState);
        }
 
         private void CheckState()
         {
-            /*if (carryingSouls >= 2)
-                StartCoroutine(DepositSouls());*/
+            if (carryingSouls >= 1)
+                StartCoroutine(DepositSouls());
             if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
             {
                 switch (CheckObjectsInfront())
@@ -56,27 +56,25 @@ namespace HaniAISpace
                         break;*/
                 }
             }
-            else
+            
+            switch (currentState)
             {
-                switch (currentState)
-                {
-                    case STATE.SoulDeposit:
-                        break;
-                
-                    case STATE.Hunting:
-                        if (currentChasableObject != null && Vector3.Distance(transform.position, currentChasableObject.transform.position) >= 10f)
-                            currentChasableObject = null;
-                        else if (currentChasableObject == null)
-                            currentState = STATE.Idle;
-                        break;
-                
-                    case STATE.RoomChange:
-                        if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
-                            currentState = STATE.Idle;
-                        break;
-                
-                    case STATE.Idle: MoveToRandomPoint(); break;
-                }
+                case STATE.SoulDeposit:
+                    break;
+            
+                case STATE.Hunting:
+                    if (currentChasableObject == null)
+                        currentState = STATE.Idle;
+                    else if (currentChasableObject != null && Vector3.Distance(transform.position, currentChasableObject.transform.position) >= 10f)
+                        currentChasableObject = null;
+                    break;
+            
+                case STATE.RoomChange:
+                    if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
+                        currentState = STATE.Idle;
+                    break;
+            
+                case STATE.Idle: MoveToRandomPoint(); break;
             }
         }
 
