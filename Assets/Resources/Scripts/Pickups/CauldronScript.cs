@@ -17,6 +17,7 @@ public class CauldronScript : MonoBehaviour
         GameObject ghost = other.gameObject;
         if (ghost.CompareTag("Ghost"))
         {
+            GetComponent<AudioSource>().Play();
            
             gameManager.ghostScores[Array.IndexOf(gameManager.playerNames, ghost.GetComponent<GhostBehaviour>().YourName)] = ghost.GetComponent<GhostBehaviour>().getSouls();
             ghost.GetComponent<GhostBehaviour>().carryingSouls = 0;
