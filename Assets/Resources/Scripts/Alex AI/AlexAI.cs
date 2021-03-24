@@ -25,7 +25,6 @@ namespace AlexAISpace
         private bool arrived;
         private Vector3 NewLocationForAI;
         public int StopHuntingTimer;
-        public GameObject BloodPrefab;
         public GameObject Cauldren;
         public int SoulsOnMe;
 
@@ -149,7 +148,6 @@ namespace AlexAISpace
                 arrived = true;
                 SoulsOnMe ++;
 
-                Instantiate(BloodPrefab, transform.position, Quaternion.identity);
 
 
             }
