@@ -110,6 +110,8 @@ MonoBehaviour:
   YourName: Matti
   speed: 0
   KillSound: {fileID: 8300000, guid: 6a596bcb2998c4b80a87ebcbc7317f2e, type: 3}
+  BloodPrefab: {fileID: 843036122552461046, guid: 9d8999164c91da1448a2b3bc3aaa22ac,
+    type: 3}
 --- !u!114 &6642335458051246614
 MonoBehaviour:
   m_ObjectHideFlags: 0
