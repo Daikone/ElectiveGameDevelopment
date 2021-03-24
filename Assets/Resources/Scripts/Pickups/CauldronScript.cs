@@ -17,10 +17,16 @@ public class CauldronScript : MonoBehaviour
         GameObject ghost = other.gameObject;
         if (ghost.CompareTag("Ghost"))
         {
-            GetComponent<AudioSource>().Play();
+            if (ghost.GetComponent<GhostBehaviour>().carryingSouls > 0)
+            {
+                GetComponent<AudioSource>().Play();
            
-            gameManager.ghostScores[Array.IndexOf(gameManager.playerNames, ghost.GetComponent<GhostBehaviour>().YourName)] = ghost.GetComponent<GhostBehaviour>().getSouls();
-            ghost.GetComponent<GhostBehaviour>().carryingSouls = 0;
+                // what are variables, am I right?
+                gameManager.ghostScores[Array.IndexOf(gameManager.playerNames, ghost.GetComponent<GhostBehaviour>().YourName)] += ghost.GetComponent<GhostBehaviour>().carryingSouls;
+                
+                ghost.GetComponent<GhostBehaviour>().carryingSouls = 0;
+            }
+            
         }
     }
 }
