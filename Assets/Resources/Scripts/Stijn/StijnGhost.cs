@@ -2,35 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Resources.Scripts.Stijn
 {
     public class StijnGhost : BaseGhostAI
     {
-        public StijnStateMachine movementSM;
-        //public StandingState standing;
+        public NavMeshAgent navMeshAgent;
+
+        public StijnStateMachine stateMachine;
+        public WanderingState wandering;
         public ChasingState chasing;
+
+        [HideInInspector]
+        public List<GameObject> HumansVisible = new List<GameObject>();
+        [HideInInspector]
+        public GameObject nearbyHuman;
+        public LayerMask HumanLayerCheck;
 
         private void Awake()
         {
-            movementSM = new StijnStateMachine();
+            stateMachine = new StijnStateMachine(this);
 
-            //standing = new StandingState(this, movementSM);
-            //chasing = new ChasingState(this, movementSM);
+            wandering = new WanderingState();
+            chasing = new ChasingState();
 
-            //movementSM.Initialize(standing);
+            stateMachine.Initialize(wandering);
         }
 
         private void Update()
         {
-            movementSM.CurrentState.HandleInput();
+            stateMachine.CurrentState.HandleInput(this);
 
-            movementSM.CurrentState.LogicUpdate();
+            stateMachine.CurrentState.LogicUpdate(this);
         }
 
         private void FixedUpdate()
         {
-            movementSM.CurrentState.PhysicsUpdate();
+            stateMachine.CurrentState.PhysicsUpdate(this);
         }
     }
 }
