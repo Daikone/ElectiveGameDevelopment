@@ -30,7 +30,7 @@ namespace Resources.Scripts.Matti_AI
                 stateMachine.ChangeState(baseAI._idleState);
             }else if (baseAI.closestHuman != null)
             {
-                if (Vector3.Distance(baseAI.transform.position, baseAI.closestHuman.transform.position) <= 7)
+                if (Vector3.Distance(baseAI.transform.position, baseAI.closestHuman.transform.position) <= 5)
                 {
                     _destination = baseAI.closestHuman.transform.position;
                 }
