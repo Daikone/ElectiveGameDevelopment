@@ -103,7 +103,7 @@ public class BaseGhostAI : MonoBehaviour
     /// <returns>Closest Object </returns>
     protected GameObject ClosestObjectInList(GameObject self, List<GameObject> list)
     {
-        if(list.Count > 0){}
+        
         int objPos = new int();
         float closestDistance = Mathf.Infinity;
         

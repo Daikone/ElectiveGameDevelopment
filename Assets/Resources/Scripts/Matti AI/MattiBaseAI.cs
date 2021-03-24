@@ -20,19 +20,20 @@ namespace Resources.Scripts.Matti_AI
         [HideInInspector] public GameObject closestHuman;
         [HideInInspector] public Vector3 closestHumanLastPos;
         
-        [HideInInspector]
+        
         public List<GameObject> CloseDoors= new List<GameObject>();
         public LayerMask HumanLayerCheck;
         public LayerMask DoorLayerCheck;
-
-        [HideInInspector]
+        
         public GameObject ClosestDoor;
 
         [HideInInspector] 
         public Vector3 ClosestDoorPos;
 
 
-        public List<GameObject> PreviousDoors = new List<GameObject>();
+        public Queue<GameObject> PreviousDoors = new Queue<GameObject>();
+        [SerializeField]
+        private int queueLength;
 
         [HideInInspector] public GameObject cauldron;
         
@@ -54,7 +55,8 @@ namespace Resources.Scripts.Matti_AI
         // Update is called once per frame
         void Update()
         {
-            HumansInSight = CheckCloseObjectsInSight(gameObject, 30f, HumanLayerCheck);
+            //checking for humans 
+            HumansInSight = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
             if (HumansInSight.Count > 0)
             {
                 closestHuman = ClosestObjectInList(gameObject, HumansInSight);
@@ -63,29 +65,40 @@ namespace Resources.Scripts.Matti_AI
             
             
             
-            CloseDoors = CheckCloseObjects(gameObject, 30f, DoorLayerCheck);
+            // checking for doors
+            CloseDoors = CheckCloseObjects(gameObject, 20f, DoorLayerCheck);
             ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
 
-            if (Vector3.Distance(transform.position, calculateDoorOffset(ClosestDoor)) <= 1)
+            if (Vector3.Distance(transform.position, calculateDoorOffset(ClosestDoor)) <= 1f)
             {
-                PreviousDoors.Insert(0,ClosestDoor);
+                if (!PreviousDoors.Contains(ClosestDoor))
+                {
+                    PreviousDoors.Enqueue(ClosestDoor);
+                }
+                
+                if (PreviousDoors.Count >= 4)
+                {
+                     PreviousDoors.Dequeue();
+                }
             }
             foreach (var door in PreviousDoors)
             {
                 CloseDoors.Remove(door);
-                
             }
 
             if (CloseDoors.Count > 0)
             {
                 ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
             }
-            
             ClosestDoorPos = calculateDoorOffset(ClosestDoor);
             
-            _stateMachine.CurrentState.LogicUpdate();
             
+            
+            
+            _stateMachine.CurrentState.LogicUpdate();
 
+            queueLength = PreviousDoors.Count;
+            
         }
     }
 }

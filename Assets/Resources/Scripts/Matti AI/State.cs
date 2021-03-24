@@ -9,12 +9,14 @@ namespace Resources.Scripts.Matti_AI
         protected StateMachine stateMachine;
         protected GameObject owner;
         protected MattiBaseAI baseAI;
+        protected float timeInState;
 
         protected State(StateMachine sm)
         {
             stateMachine = sm;
             owner = sm.owner;
             baseAI = sm.owner.GetComponent<MattiBaseAI>();
+            
 
         }
 
