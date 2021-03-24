@@ -57,12 +57,13 @@ public class TriggerCheck : MonoBehaviour
             Camera camerComp = GetComponent<Camera>();
             
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, followObject.transform.position, out hit, 5f, LayerMask.GetMask("Walls")))
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, 5f, LayerMask.GetMask("Walls")))
             {
                 //Quaternion newRot = Quaternion.Lerp(transform.rotation, Quaternion.Euler(30, followObject.transform.eulerAngles.y, 0), .125f);
                 //transform.Rotate(newRot);
                 transform.rotation = Quaternion.Euler(30, followObject.transform.eulerAngles.y, 0);
-                offsetDistance = 1.5f;
+                offsetDistance = 1f;
+                //float d = Vector3.Distance(-followObject.transform.forward, hit.collider.gameObject.transform.forward);
                 camerComp.fieldOfView = 90;
             }
             else
