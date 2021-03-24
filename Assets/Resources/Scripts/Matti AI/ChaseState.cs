@@ -14,23 +14,44 @@ namespace Resources.Scripts.Matti_AI
             
         }
 
+        private float _timeWhenOutOfSight;
+        private bool _isGoingForPos;
+
         public override void Enter()
         {
             Debug.Log("Chasing");
             baseAI.agent.ResetPath();
-            
+            timeInState = 0;
+            _isGoingForPos = false;
+
         }
 
         public override void LogicUpdate()
         {
+            timeInState += Time.deltaTime;
+            
+            
             if (baseAI.HumansInSight.Count > 0)
             {
                 baseAI.agent.SetDestination(baseAI.closestHuman.transform.position);
-                
-            }else if (baseAI.HumansInSight.Count == 0)
+            }
+            else if (baseAI.HumansInSight.Count == 0)
             {
-                baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
-                
+                if (!_isGoingForPos)
+                {
+                    _timeWhenOutOfSight = timeInState;
+                    _isGoingForPos = true;
+                }
+
+                if (timeInState - _timeWhenOutOfSight <= 3)
+                {
+                    baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
+                }
+                else
+                {
+                    _isGoingForPos = false;
+                    _timeWhenOutOfSight = 0;
+                }
             }
             else
             {

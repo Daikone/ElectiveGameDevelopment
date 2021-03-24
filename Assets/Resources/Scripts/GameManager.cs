@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
         {
             ScoreBoard.Add(playerNames[i], ghostScores[i]);
         }
+        currentTime -= Time.deltaTime;
 
     }
 
