@@ -53,8 +53,8 @@ namespace AlexAISpace
         {
             if(SoulsOnMe >= 3)
                 DunkSouls();
-            //else if (CheckHumanInfront())
-              //  ChaseHuman();
+            else if (CheckHumanInfront())
+                ChaseHuman();
             else if (currentState == STATE.Patrol && arrived == true)//Arrived is to make sure that it does not keep firing 24/7 and cause a huge preformance cost
             {
                 Patrolling();
