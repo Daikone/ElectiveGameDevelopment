@@ -33,7 +33,7 @@ namespace Resources.Scripts.Matti_AI
 
         public Queue<GameObject> PreviousDoors = new Queue<GameObject>();
         [SerializeField]
-        private int queueLength;
+        
 
         [HideInInspector] public GameObject cauldron;
         
@@ -55,12 +55,19 @@ namespace Resources.Scripts.Matti_AI
         // Update is called once per frame
         void Update()
         {
+            carryingSouls = behaviour.carryingSouls;
+            
+            
             //checking for humans 
             HumansInSight = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
             if (HumansInSight.Count > 0)
             {
                 closestHuman = ClosestObjectInList(gameObject, HumansInSight);
                 closestHumanLastPos = closestHuman.transform.position;
+            }
+            else
+            {
+                closestHuman = null;
             }
             
             
@@ -96,8 +103,9 @@ namespace Resources.Scripts.Matti_AI
             
             
             _stateMachine.CurrentState.LogicUpdate();
+            HumansInSight.Clear();
 
-            queueLength = PreviousDoors.Count;
+            
             
         }
     }

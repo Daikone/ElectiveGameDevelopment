@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public float[] ghostScores = {0, 0, 0, 0, 0};
     
     public SortedDictionary<string, float> ScoreBoard = new SortedDictionary<string, float>();
-    private const float MINHUMANS = 5;
+    private const float MINHUMANS = 7;
     private const float MAXTIME = 65;
     private const float MAXPOINTS = 10;
 
