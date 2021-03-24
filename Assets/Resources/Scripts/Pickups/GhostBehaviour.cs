@@ -70,6 +70,7 @@ public class GhostBehaviour : BaseGhostAI
             //audio
             GetComponent<AudioSource>().Play();
             //alex blood system
+            if(BloodPrefab != null)
             Instantiate(BloodPrefab, transform.position, Quaternion.identity);
         }
         
