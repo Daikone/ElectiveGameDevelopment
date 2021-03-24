@@ -17,33 +17,20 @@ namespace HaniAISpace
         
         public List<Transform> rooms;
         
-        private float rotationSpeed = 1f;
-        private GameObject currentHuman;
-        private float speed;
-
         private STATE currentState;
         private INTERACTABLE Interactable;
-        private ABILITY currentAbility;
         private Vector3 targetRoomPos;
-        private Rigidbody rb;
-        private float distanceToCurrentHuman;
-
+        private GameObject currentChasableObject;
+        private GhostBehaviour gb;
         private int randomNumber;
-
-        // Chase fix + check distnace to wall and from wall to human
+        private float distanceToCurrentHuman;
+        
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            speed = GetSpeed();
-            agent.speed = GetSpeed();
-            //MovetoPoint(ROOM.Hallway1);
+            gb = gameObject.GetComponent<GhostBehaviour>();
             currentState = STATE.Idle;
-            currentAbility = ABILITY.none;
-            
-            //rooms = new List<Room>();
         }
 
-       // Update is called once per frame
        void Update()
        {
            CheckState();
@@ -52,45 +39,44 @@ namespace HaniAISpace
 
         private void CheckState()
         {
-            /*if (carryingSouls >= 3)
-               currentState = STATE.SoulDeposit;*/
-
+            /*if (carryingSouls >= 2)
+                StartCoroutine(DepositSouls());*/
             if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
             {
                 switch (CheckObjectsInfront())
                 {
                     case INTERACTABLE.Human:
-                        ChaseHuman();
+                        ChaseObject();
                         break;
                 
-                    case INTERACTABLE.Pickup: ChaseHuman();
-                        break;/*ChaseHuman();
-                        break;*/
-                    
-                    case INTERACTABLE.Ghost: //ChaseHuman();
+                    case INTERACTABLE.Pickup: 
+                        ChaseObject();
                         break;
+                    /*case INTERACTABLE.Ghost:
+                        break;*/
                 }
             }
-            
-            
-            switch (currentState)
+            else
             {
-                case STATE.SoulDeposit: //DepositSouls();
-                    break;
+                switch (currentState)
+                {
+                    case STATE.SoulDeposit:
+                        break;
                 
-                case STATE.Hunting:
-                    if (currentHuman != null && Vector3.Distance(transform.position, currentHuman.transform.position) >= 10f)
-                        currentHuman = null;
-                    else if (currentHuman == null)
-                        currentState = STATE.Idle;
-                    break;
+                    case STATE.Hunting:
+                        if (currentChasableObject != null && Vector3.Distance(transform.position, currentChasableObject.transform.position) >= 10f)
+                            currentChasableObject = null;
+                        else if (currentChasableObject == null)
+                            currentState = STATE.Idle;
+                        break;
                 
-                case STATE.RoomChange:
-                    if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
-                        currentState = STATE.Idle;
-                    break;
+                    case STATE.RoomChange:
+                        if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
+                            currentState = STATE.Idle;
+                        break;
                 
-                case STATE.Idle: MoveToRandomPoint(); break;
+                    case STATE.Idle: MoveToRandomPoint(); break;
+                }
             }
         }
 
@@ -107,57 +93,55 @@ namespace HaniAISpace
         
         private INTERACTABLE CheckObjectsInfront()
         {
-
-            Collider[] objNearby = Physics.OverlapSphere(transform.position, 5f, LayerMask.GetMask("Humans", "Walls", "Pickups", "Ghosts")); // variable instead of hardcode
+            Collider[] objNearby = Physics.OverlapSphere(transform.position, 5f, LayerMask.GetMask("Humans", "Pickups"));
 
             GameObject nearestObject = CheckClosestObject(objNearby);
-
+            
             if (nearestObject != null)
             {
-                if (nearestObject.CompareTag("Human"))
+                if (gb.hasPickup == false && gb.isPickupActive == false && nearestObject.CompareTag("Pickup"))
                 {
-                    currentHuman = nearestObject;
-                    return INTERACTABLE.Human;
-                }
-
-                if (nearestObject.CompareTag("Pickup"))
-                {
-                    currentHuman = nearestObject;
+                    currentChasableObject = nearestObject;
                     return INTERACTABLE.Pickup;
                 }
-
-                if (nearestObject.CompareTag("Ghost"))
+            
+                if (nearestObject.CompareTag("Human"))
+                {
+                    currentChasableObject = nearestObject;
+                    return INTERACTABLE.Human; 
+                }
+                
+                /*if (nearestObject.CompareTag("Ghost"))
                 {
                     currentHuman = nearestObject;
                     return INTERACTABLE.Ghost;
-                }
+                }*/
                     
             }
+
+            
 
             return INTERACTABLE.None;
         }    
 
-        protected void DepositSouls()
+        IEnumerator DepositSouls()
         {
             currentState = STATE.SoulDeposit;
             targetRoomPos = rooms[0].position;
             agent.SetDestination(targetRoomPos);
             //reset to idle
+            yield return new WaitForSeconds(10f);
+            currentState = STATE.Idle;
         }
 
-        protected void ChaseHuman()
+        protected void ChaseObject()
         {
             currentState = STATE.Hunting;
 
-            if (currentHuman != null)
+            if (currentChasableObject != null)
             {
-                agent.SetDestination(currentHuman.transform.position);
+                agent.SetDestination(currentChasableObject.transform.position);
             }
-        }
-
-        private void Stealsouls()
-        {
-            currentAbility = ABILITY.SoulSteal;
         }
 
         private GameObject CheckClosestObject(Collider[] objList)
