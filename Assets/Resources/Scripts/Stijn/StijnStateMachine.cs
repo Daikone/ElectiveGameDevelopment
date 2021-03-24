@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 namespace Resources.Scripts.Stijn
@@ -9,18 +10,25 @@ namespace Resources.Scripts.Stijn
     {
         public State CurrentState { get; private set; }
 
+        private StijnGhost owner;
+
+        public StijnStateMachine(StijnGhost owner)
+        {
+            this.owner = owner;
+        }
+
         public void Initialize(State startingState)
         {
             CurrentState = startingState;
-            startingState.Enter();
+            startingState.Enter(owner);
         }
 
         public void ChangeState(State newState)
         {
-            CurrentState.Exit();
+            CurrentState.Exit(owner);
 
             CurrentState = newState;
-            newState.Enter();
+            newState.Enter(owner);
         }
     }
 }
