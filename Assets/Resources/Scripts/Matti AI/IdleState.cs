@@ -37,7 +37,7 @@ namespace Resources.Scripts.Matti_AI
                 baseAI.agent.SetDestination(baseAI.ClosestDoorPos);
             }
 
-            if (baseAI.behaviour.carryingSouls >= 5)
+            if (baseAI.behaviour.carryingSouls >= 3)
             {
                 stateMachine.ChangeState(baseAI._saveSoulsState);
             }

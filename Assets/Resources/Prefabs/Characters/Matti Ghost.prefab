@@ -70,10 +70,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5614679
-  m_Height: 1.1527684
+  m_Radius: 0.65
+  m_Height: 1.2687583
   m_Direction: 1
-  m_Center: {x: 0, y: 0.24100578, z: 0.061467886}
+  m_Center: {x: 0, y: 0.2990009, z: 0.0614679}
 --- !u!54 &4714536899873066830
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   isPickupActive: 0
   YourName: Matti
   speed: 0
-  KillSound: {fileID: 0}
+  KillSound: {fileID: 8300000, guid: 6a596bcb2998c4b80a87ebcbc7317f2e, type: 3}
 --- !u!114 &6642335458051246614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ MonoBehaviour:
     m_Bits: 256
   ClosestDoor: {fileID: 0}
   ClosestDoorPos: {x: 0, y: 0, z: 0}
-  PreviousDoors: []
+  queueLength: 0
   cauldron: {fileID: 0}
 --- !u!82 &2852188706326282731
 AudioSource:
@@ -150,7 +150,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 6a596bcb2998c4b80a87ebcbc7317f2e, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
