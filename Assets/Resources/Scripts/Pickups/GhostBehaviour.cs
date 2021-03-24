@@ -12,8 +12,7 @@ public class GhostBehaviour : BaseGhostAI
 {
     public bool hasPickup = false;
     public bool isPickupActive = false;
-    
-    
+
     //   !!!!!!! Matti Stuff !!!!!!!!!
     public string YourName;
     private GameObject Cauldron;
@@ -21,7 +20,7 @@ public class GhostBehaviour : BaseGhostAI
 
     // !!!!!!!Alex Audio Solution!!!!!! \\
     public AudioClip KillSound;
-
+    public GameObject BloodPrefab;
     public float getSouls()
     {
         return carryingSouls;
@@ -70,6 +69,8 @@ public class GhostBehaviour : BaseGhostAI
 
             //audio
             GetComponent<AudioSource>().Play();
+            //alex blood system
+            Instantiate(BloodPrefab, transform.position, Quaternion.identity);
         }
         
     }
