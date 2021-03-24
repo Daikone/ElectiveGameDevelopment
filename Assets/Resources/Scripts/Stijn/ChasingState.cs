@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class ChasingState : MonoBehaviour
+namespace Resources.Scripts.Stijn
 {
-    // Start is called before the first frame update
-    void Start()
+    public class ChasingState : State
     {
-        
-    }
+        public override void Enter(StijnGhost owner)
+        {
+            Debug.Log("Stijn's Ghost is chasing");
+            owner.navMeshAgent.ResetPath();
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public override void LogicUpdate(StijnGhost owner)
+        {
+            
+        }
     }
 }

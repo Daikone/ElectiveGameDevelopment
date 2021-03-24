@@ -1,42 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 namespace Resources.Scripts.Stijn
 {
     public abstract class State
     {
-        protected StijnStateMachine stateMachine;
-        protected StijnGhost character;
 
-        protected State(CharacterController character, StijnStateMachine stateMachine)
-        {
-            //this.character = character;
-            this.stateMachine = stateMachine;
-        }
-
-        public virtual void Enter()
+        public virtual void Enter(StijnGhost owner)
         {
 
         }
 
-        public virtual void HandleInput()
+        public virtual void HandleInput(StijnGhost owner)
         {
 
         }
 
-        public virtual void LogicUpdate()
+        public virtual void LogicUpdate(StijnGhost owner)
         {
 
         }
 
-        public virtual void PhysicsUpdate()
+        public virtual void PhysicsUpdate(StijnGhost owner)
         {
 
         }
 
-        public virtual void Exit()
+        public virtual void Exit(StijnGhost owner)
         {
 
         }
