@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class TriggerCheck : MonoBehaviour
+public class CameraChange : MonoBehaviour
 {
     private int randomNum;
     private Collider[] objectInArea;
