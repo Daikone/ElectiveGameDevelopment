@@ -8,11 +8,12 @@ public class TriggerCheck : MonoBehaviour
 {
     private int randomNum;
     private Collider[] objectInArea;
-    private bool followNewObject;
     private GameObject followObject;
+
+    private List<GameObject> ghosts;
+    private List<GameObject> humans;
     private void Start()
     {
-        
         InvokeRepeating("CheckEntitiesInMap", 0f, 5f);
     }
 
@@ -27,29 +28,64 @@ public class TriggerCheck : MonoBehaviour
             Quaternion.identity, LayerMask.GetMask("Humans", "Ghosts"));
 
         randomNum = Random.Range(0, objectInArea.Length);
+        
+
+        humans = new List<GameObject>();
+        ghosts = new List<GameObject>();
+        
+        foreach (var obj in objectInArea)
+        {
+            if (obj.CompareTag("Human"))
+                humans.Add(obj.gameObject);
+            if (obj.CompareTag("Ghost"))
+                ghosts.Add(obj.gameObject);
+        }
+        
+        //Debug.Log("There are " + ghosts.Count + " Ghosts and " + humans.Count + " Humans right  now!");
+
         CheckAroundCurrentObject();
     }
 
     void CheckAroundCurrentObject()
     {
-        Collider[] aroundStuff = Physics.OverlapSphere(objectInArea[randomNum].transform.position, 3f,
+        int randomGhost = Random.Range(0, ghosts.Count);
+        int randomHuman = Random.Range(0, humans.Count);
+        
+        /*Collider[] objectsAroundEntity = Physics.OverlapSphere(objectInArea[randomNum].transform.position, 3f,
             LayerMask.GetMask("Humans", "Ghosts"));
 
-        if (aroundStuff.Length < 2)
+        if (objectsAroundEntity.Length < 2)
         {
             randomNum = Random.Range(0, objectInArea.Length);
             CheckAroundCurrentObject(); //Maybe also check if its a ghost (Could store in 2 differrent list of colliders to specifically check)
         }
         else
         {
-            followNewObject = true;
             followObject = objectInArea[randomNum].gameObject;
+        }*/
+        
+        Collider[] objectsAroundGhosts = Physics.OverlapSphere(ghosts[randomGhost].transform.position, 3f,
+            LayerMask.GetMask("Ghosts","Humans"));
+        Collider[] objectsAroundHumans = Physics.OverlapSphere(humans[randomHuman].transform.position, 3f,
+            LayerMask.GetMask("Ghosts","Humans"));
+
+        if (objectsAroundGhosts.Length < 2)
+        {
+            CheckAroundCurrentObject();
+        }
+        else if (objectsAroundHumans.Length > 2)
+        {
+            followObject = humans[randomHuman].gameObject;
+        }
+        else
+        {
+            followObject = ghosts[randomGhost].gameObject;
         }
     }
 
     void FollowObject()
     {
-        if (followObject != null && followNewObject == true) {
+        if (followObject != null) {
             
             float offsetDistance = 2.5f;
             Camera camerComp = GetComponent<Camera>();

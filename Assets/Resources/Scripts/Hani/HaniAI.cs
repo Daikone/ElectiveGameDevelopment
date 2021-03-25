@@ -39,9 +39,9 @@ namespace HaniAISpace
 
         private void CheckState()
         {
-            if (carryingSouls >= 1)
-                StartCoroutine(DepositSouls());
-            if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
+            if (carryingSouls >= 2)
+                DepositSouls();
+            else if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
             {
                 switch (CheckObjectsInfront())
                 {
@@ -60,6 +60,8 @@ namespace HaniAISpace
             switch (currentState)
             {
                 case STATE.SoulDeposit:
+                    if(Vector3.Distance(transform.position, targetRoomPos) < .1f)
+                        currentState = STATE.Idle;
                     break;
             
                 case STATE.Hunting:
@@ -122,24 +124,19 @@ namespace HaniAISpace
             return INTERACTABLE.None;
         }    
 
-        IEnumerator DepositSouls()
+        void DepositSouls()
         {
             currentState = STATE.SoulDeposit;
             targetRoomPos = rooms[0].position;
             agent.SetDestination(targetRoomPos);
-            //reset to idle
-            yield return new WaitForSeconds(10f);
-            currentState = STATE.Idle;
         }
 
-        protected void ChaseObject()
+        void ChaseObject()
         {
             currentState = STATE.Hunting;
 
             if (currentChasableObject != null)
-            {
                 agent.SetDestination(currentChasableObject.transform.position);
-            }
         }
 
         private GameObject CheckClosestObject(Collider[] objList)
