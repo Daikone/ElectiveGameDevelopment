@@ -24,6 +24,7 @@ namespace Resources.Scripts.Matti_AI
         public List<GameObject> CloseDoors= new List<GameObject>();
         public LayerMask HumanLayerCheck;
         public LayerMask DoorLayerCheck;
+        public LayerMask PickUpLayerCheck;
         
         public GameObject ClosestDoor;
 
@@ -36,6 +37,10 @@ namespace Resources.Scripts.Matti_AI
         
 
         [HideInInspector] public GameObject cauldron;
+
+        [HideInInspector] public List<GameObject> PickUpsInSight = new List<GameObject>();
+        [HideInInspector] public GameObject closestPickUp;
+        
         
         
 
@@ -98,6 +103,15 @@ namespace Resources.Scripts.Matti_AI
                 ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
             }
             ClosestDoorPos = calculateDoorOffset(ClosestDoor);
+            
+            
+            // checking for pickUps 
+            PickUpsInSight = CheckCloseObjectsInSight(gameObject, 10, PickUpLayerCheck);
+            if (PickUpsInSight.Count > 0)
+            {
+                closestPickUp = ClosestObjectInList(gameObject,PickUpsInSight );
+            }
+            
             
             
             
