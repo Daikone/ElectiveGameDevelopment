@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace AlexAISpace
 {
-    //All the AI States 
+    //All the AI States more states were not nessesarry  
     public enum STATE
     {
         Idle,
@@ -16,24 +14,21 @@ namespace AlexAISpace
 
     public class AlexAI : BaseGhostAI
     {
-        //General AI var
-
+        //Human hunting Vars
         private GameObject currentHuman;
-        private Vector3 PatrolDestination;
-        public int ResetTimer;
 
+        //Patrolling and debugging for AI
+        private Vector3 PatrolDestination;
+        protected int ResetTimer;
         private bool arrived;
         private Vector3 NewLocationForAI;
-        public int StopHuntingTimer;
-        public GameObject Cauldren;
-        public int SoulsOnMe;
 
+        //Dunking System
+        public GameObject Cauldren;
+        protected int SoulsOnMe;
 
         //Statemachine var
         private STATE currentState = STATE.Patrol;
-
-        //Ability var
-        //private ABILITY currentAbility;
 
 
         // Start is called before the first frame update
@@ -46,10 +41,21 @@ namespace AlexAISpace
             NewLocationForAI = new Vector3(0,0,0);
 
         }
+        /// <summary>
+        /// 
+        /// General Description of how the AI works
+        /// 1. First it is gonna check how many souls I have
+        /// 2. Then it will look if there is any human nearby
+        /// 3. If both are no then go a random posistion on the map
+        /// 
+        /// repeat from step one
+        /// 
+        /// </summary>
 
         // Update is called once per frame
         void Update()
         {
+            
             if(SoulsOnMe >= 3)
                 DunkSouls();
             else if (CheckHumanInfront())
@@ -58,7 +64,7 @@ namespace AlexAISpace
             {
                 Patrolling();
             }
-            if(agent.transform.position == NewLocationForAI)
+            if(agent.transform.position == NewLocationForAI)//Has the AI arrived at its destination? yes good give him a new one
             {
                 arrived = true;
             }
@@ -91,14 +97,17 @@ namespace AlexAISpace
             {
                 ResetTimer = 0;
             }
-            
         }
+        //The patrolling AI works as following
         void Patrolling()
-        { 
+        {       
+                //First check if he is at it's destination or if he has not yet have a destination
                 if (agent.destination == PatrolDestination || PatrolDestination == new Vector3())
                 {
+                    //Give him a random destination
                     if (NavMesh.SamplePosition(new Vector3(Random.Range(-16, 16), 0, Random.Range(-16, 16)) + transform.position, out NavMeshHit EndLocation, 1.0f, NavMesh.AllAreas))
                     {
+                    //Store this and give him a destination
                         PatrolDestination = EndLocation.position;
                         agent.destination = PatrolDestination;
                         NewLocationForAI = PatrolDestination;
@@ -125,6 +134,7 @@ namespace AlexAISpace
             }
             return false;
         }
+        //Hunt the human down and get his/her soul!
         protected void ChaseHuman()
         {
                 currentState = STATE.Hunting;
@@ -144,6 +154,7 @@ namespace AlexAISpace
         {
             if (collision.gameObject.tag == "Human")
             {
+                //put him back in a patrol mode
                 currentState = STATE.Patrol;
                 arrived = true;
                 SoulsOnMe ++;
@@ -151,15 +162,15 @@ namespace AlexAISpace
 
 
             }
-            //if dunked go back to patrol
+            //if dunked go back to patrol. The reason for this course of action is that I was unable to get the code from ghostbehavior script that is why I made my own
+            //(it does not intervere with the game)
             else if(collision.gameObject.tag == "Cauldron")
             {
                 if (SoulsOnMe >= 3)
                 {
                     SoulsOnMe = 0;
                     currentState = STATE.Patrol;
-                    agent.ResetPath();
-                    arrived = true;
+                    Patrolling();
                 }
 
             }
