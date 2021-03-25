@@ -32,11 +32,11 @@ public class UIScoreUpdate : MonoBehaviour
 
     public void ScoreUpdate()
     {
-        AlexScore.text = gameManager.ghostScores[3].ToString();
-        StijnScore.text = gameManager.ghostScores[2].ToString();
-        EsméScore.text = gameManager.ghostScores[0].ToString();
-        MattiScore.text = gameManager.ghostScores[4].ToString();
-        HaniScore.text = gameManager.ghostScores[1].ToString();
+        AlexTotal.text = gameManager.ghostScores[3].ToString();
+        StijnTotal.text = gameManager.ghostScores[2].ToString();
+        EsméTotal.text = gameManager.ghostScores[0].ToString();
+        MattiTotal.text = gameManager.ghostScores[4].ToString();
+        HaniTotal.text = gameManager.ghostScores[1].ToString();
 
         //AlexTotal.text = gameManager.
     }
