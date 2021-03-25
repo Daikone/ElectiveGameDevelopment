@@ -40,7 +40,7 @@ public class HumanEscapingState : BaseHumanBehaviour
             else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 3)
             {
                 _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
-                _destination = _transform.position + _transform.forward.normalized;
+                _destination = _transform.position + _transform.forward.normalized*2;
                 
                 // prevents getting stuck in corners
                 if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1.5f))
