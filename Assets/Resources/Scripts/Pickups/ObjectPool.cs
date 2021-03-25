@@ -23,6 +23,8 @@ public class ObjectPool : MonoBehaviour
             Vector3 position = new Vector3(Random.Range(-spawnRadius, spawnRadius), 0, Random.Range(-spawnRadius, spawnRadius)) + transform.position;
             NavMeshHit hit;
             Vector3 result;
+
+            //check if random position is on the NavMesh, if yes, store in result, and instantiate the pickup in that position
             if (NavMesh.SamplePosition(position, out hit, 1.0f, 1))
             {
                 result = hit.position;

@@ -24,12 +24,15 @@ public class EsmeGhostAi : MonoBehaviour
     {
         ghostBehaviour = gameObject.GetComponent<GhostBehaviour>();
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+
+        //get cauldron position on the NavMesh
         if (NavMesh.SamplePosition(GameObject.Find("Cauldron").transform.position, out NavMeshHit hit, 1.0f, 1))
         {
             cauldronPosition = hit.position;
         }
     }
 
+    //check current state and performs that state's action
     void Update ()
     {
         souls = ghostBehaviour.getSouls();
@@ -74,6 +77,7 @@ public class EsmeGhostAi : MonoBehaviour
         Collider[] othersCollidersInRadius = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
         OthersColliders = new List<Collider>();
 
+        //loop through all detected colliders, if the linecast does not detect a wall, add the collider to the otherColliders list
         foreach (Collider otherCollider in othersCollidersInRadius)
         {
             if (!Physics.Linecast(eyesPosition, otherCollider.transform.position, LayerMask.GetMask("Walls"))) 
@@ -82,14 +86,16 @@ public class EsmeGhostAi : MonoBehaviour
             }
         }
 
+        //sort the list by distance
         OthersColliders = OthersColliders.OrderBy(otherCollider => Vector3.Distance(otherCollider.transform.position, transform.position)).ToList();
     }
 
     void selectGhostState () {
-        // if (ghostBehaviour.getSouls() >= 5) {
-        //     _state = EState.depositSouls;
-        //     return;
-        // }
+        //if you gather more than 5 souls, deposit to the cauldron
+        if (ghostBehaviour.getSouls() >= 5) {
+            _state = EState.depositSouls;
+            return;
+        }
 
         if (OthersColliders.Count > 0)
         {
@@ -132,6 +138,7 @@ public class EsmeGhostAi : MonoBehaviour
         }
     }
 
+    //generate random position from AI location, then check whether it's on the NavMesh, then make it the new destination
     void patrolling () {
         if (transform.position == patrolPosition || navMeshAgent.destination != patrolPosition || patrolPosition == new Vector3()) {
             if (NavMesh.SamplePosition(new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20)) + transform.position, out NavMeshHit hit, 1.0f, 1))
