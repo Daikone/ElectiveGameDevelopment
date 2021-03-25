@@ -14,7 +14,7 @@ public class CameraChange : MonoBehaviour
     private List<GameObject> humans;
     private void Start()
     {
-        InvokeRepeating("CheckEntitiesInMap", 0f, 5f);
+        InvokeRepeating("CheckEntitiesInMap", 0f, 2f);
     }
 
     private void Update()
@@ -50,20 +50,7 @@ public class CameraChange : MonoBehaviour
     {
         int randomGhost = Random.Range(0, ghosts.Count);
         int randomHuman = Random.Range(0, humans.Count);
-        
-        /*Collider[] objectsAroundEntity = Physics.OverlapSphere(objectInArea[randomNum].transform.position, 3f,
-            LayerMask.GetMask("Humans", "Ghosts"));
 
-        if (objectsAroundEntity.Length < 2)
-        {
-            randomNum = Random.Range(0, objectInArea.Length);
-            CheckAroundCurrentObject(); //Maybe also check if its a ghost (Could store in 2 differrent list of colliders to specifically check)
-        }
-        else
-        {
-            followObject = objectInArea[randomNum].gameObject;
-        }*/
-        
         Collider[] objectsAroundGhosts = Physics.OverlapSphere(ghosts[randomGhost].transform.position, 3f,
             LayerMask.GetMask("Ghosts","Humans"));
         Collider[] objectsAroundHumans = Physics.OverlapSphere(humans[randomHuman].transform.position, 3f,
@@ -81,6 +68,19 @@ public class CameraChange : MonoBehaviour
         {
             followObject = ghosts[randomGhost].gameObject;
         }
+        
+        /*Collider[] objectsAroundEntity = Physics.OverlapSphere(objectInArea[randomNum].transform.position, 3f,
+            LayerMask.GetMask("Humans", "Ghosts"));
+
+        if (objectsAroundEntity.Length < 2)
+        {
+            randomNum = Random.Range(0, objectInArea.Length);
+            CheckAroundCurrentObject(); //Maybe also check if its a ghost (Could store in 2 differrent list of colliders to specifically check)
+        }
+        else
+        {
+            followObject = objectInArea[randomNum].gameObject;
+        }*/
     }
 
     void FollowObject()
@@ -95,7 +95,7 @@ public class CameraChange : MonoBehaviour
                 LayerMask.GetMask("Walls")))
             {
                 transform.rotation = Quaternion.Euler(30, followObject.transform.eulerAngles.y, 0);
-                offsetDistance = 1f;
+                offsetDistance -= 1f;
                 camerComp.fieldOfView = 90;
             }
             else
