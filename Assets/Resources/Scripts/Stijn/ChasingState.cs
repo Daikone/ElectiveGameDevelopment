@@ -9,13 +9,20 @@ namespace Resources.Scripts.Stijn
     {
         public override void Enter(StijnGhost owner)
         {
-            Debug.Log("Stijn's Ghost is chasing");
             owner.navMeshAgent.ResetPath();
         }
 
         public override void LogicUpdate(StijnGhost owner)
         {
-            
+            if (owner.HumansVisible.Count > 0)
+            {
+                owner.navMeshAgent.SetDestination(owner.nearbyHuman.transform.position);
+            }
+
+            else
+            {
+                owner.stateMachine.ChangeState(owner.wandering);
+            }
         }
     }
 }

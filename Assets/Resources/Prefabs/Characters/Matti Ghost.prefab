@@ -138,9 +138,14 @@ MonoBehaviour:
   DoorLayerCheck:
     serializedVersion: 2
     m_Bits: 256
+  PickUpLayerCheck:
+    serializedVersion: 2
+    m_Bits: 8192
   ClosestDoor: {fileID: 0}
   ClosestDoorPos: {x: 0, y: 0, z: 0}
   cauldron: {fileID: 0}
+  PickUpsInSight: []
+  closestPickUp: {fileID: 0}
 --- !u!82 &2852188706326282731
 AudioSource:
   m_ObjectHideFlags: 0
