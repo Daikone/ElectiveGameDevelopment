@@ -14,7 +14,6 @@ namespace Resources.Scripts.Stijn
         public override void Enter(StijnGhost owner)
         {
             timer = 0;
-            Debug.Log("Wandering");
 
             newPos = RandomNavSphere(owner.transform.position, 10, -1);
             owner.navMeshAgent.SetDestination(newPos);
@@ -29,17 +28,18 @@ namespace Resources.Scripts.Stijn
             if (timer <= 10)
             {
                 timer = 0;
-                Debug.Log(newPos);
             }
 
             if (dist != Mathf.Infinity && owner.navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete && owner.navMeshAgent.remainingDistance == 0)
             {
-                Debug.Log("Getting a new destination");
                 newPos = RandomNavSphere(owner.transform.position, 10, -1);
                 owner.navMeshAgent.SetDestination(newPos);
             }
 
-
+            if (owner.HumansVisible.Count > 0)
+            {
+                owner.stateMachine.ChangeState(owner.chasing);
+            }
         }
 
         public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)

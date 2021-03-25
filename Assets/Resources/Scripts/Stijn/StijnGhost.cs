@@ -14,11 +14,12 @@ namespace Resources.Scripts.Stijn
         public WanderingState wandering;
         public ChasingState chasing;
 
-        [HideInInspector]
-        public List<GameObject> HumansVisible = new List<GameObject>();
-        [HideInInspector]
-        public GameObject nearbyHuman;
+        [HideInInspector] public List<GameObject> HumansVisible = new List<GameObject>();
+        [HideInInspector] public GameObject nearbyHuman;
         public LayerMask HumanLayerCheck;
+
+        [HideInInspector] public Vector3 latestPosHuman;
+
 
         private void Awake()
         {
@@ -35,6 +36,13 @@ namespace Resources.Scripts.Stijn
             stateMachine.CurrentState.HandleInput(this);
 
             stateMachine.CurrentState.LogicUpdate(this);
+
+            HumansVisible = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
+            if (HumansVisible.Count > 0)
+            {
+                nearbyHuman = ClosestObjectInList(gameObject, HumansVisible);
+                latestPosHuman = nearbyHuman.transform.position;
+            }
         }
 
         private void FixedUpdate()

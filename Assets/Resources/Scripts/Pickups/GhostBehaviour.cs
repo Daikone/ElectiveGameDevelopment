@@ -21,6 +21,9 @@ public class GhostBehaviour : BaseGhostAI
     // !!!!!!!Alex Audio Solution!!!!!! \\
     public AudioClip KillSound;
     public GameObject BloodPrefab;
+
+    public UIScoreUpdate scoreScript;
+
     public float getSouls()
     {
         return carryingSouls;
@@ -72,6 +75,9 @@ public class GhostBehaviour : BaseGhostAI
             //alex blood system
             if(BloodPrefab != null)
             Instantiate(BloodPrefab, transform.position, Quaternion.identity);
+
+            //update scores
+            scoreScript.ScoreUpdate();
         }
         
     }
