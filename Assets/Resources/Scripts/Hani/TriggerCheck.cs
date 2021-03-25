@@ -113,6 +113,8 @@ public class TriggerCheck : MonoBehaviour
             //something to check if the camera has been in the same place for long
 
             //camera fixed position but looks at the target like cctv;
+            
+            //distance between the close objects
         }
     }
 }

@@ -29,6 +29,7 @@ namespace HaniAISpace
         {
             gb = gameObject.GetComponent<GhostBehaviour>();
             currentState = STATE.Idle;
+            //sheck if human in view
         }
 
        void Update()
@@ -46,7 +47,12 @@ namespace HaniAISpace
                 switch (CheckObjectsInfront())
                 {
                     case INTERACTABLE.Human:
-                        ChaseObject();
+                        RaycastHit hit;
+                        if (!Physics.Linecast(transform.position, currentChasableObject.transform.position, out hit,
+                            LayerMask.GetMask("Walls")))
+                            ChaseObject();
+                        else
+                            currentState = STATE.Idle;
                         break;
                 
                     case INTERACTABLE.Pickup: 
@@ -93,7 +99,7 @@ namespace HaniAISpace
         
         private INTERACTABLE CheckObjectsInfront()
         {
-            Collider[] objNearby = Physics.OverlapSphere(transform.position, 5f, LayerMask.GetMask("Humans", "Pickups"));
+            Collider[] objNearby = Physics.OverlapSphere(transform.position, 10f, LayerMask.GetMask("Humans", "Pickups"));
 
             GameObject nearestObject = CheckClosestObject(objNearby);
             
@@ -118,6 +124,8 @@ namespace HaniAISpace
                 }*/
                     
             }
+            
+            //Raycast check
 
             
 
