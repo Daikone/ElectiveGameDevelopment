@@ -9,14 +9,18 @@ namespace Resources.Scripts.Matti_AI
         protected StateMachine stateMachine;
         protected GameObject owner;
         protected MattiBaseAI baseAI;
+        protected float timeInState;
 
         protected State(StateMachine sm)
         {
             stateMachine = sm;
             owner = sm.owner;
             baseAI = sm.owner.GetComponent<MattiBaseAI>();
+            
 
         }
+
+        
         
         
         public virtual void Enter()
@@ -29,15 +33,8 @@ namespace Resources.Scripts.Matti_AI
 
         }
 
-        public virtual void LogicUpdate()
-        {
-
-        }
-
-        public virtual void PhysicsUpdate()
-        {
-
-        }
+        public abstract void LogicUpdate();
+        
 
         public virtual void Exit()
         {

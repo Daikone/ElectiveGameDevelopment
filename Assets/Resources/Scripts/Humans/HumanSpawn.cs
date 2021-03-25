@@ -15,7 +15,7 @@ public class HumanSpawn : MonoBehaviour
     private void spawnMoreHumans()
     {
         Debug.Log("Spawn Humans");
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < 2; i++)
         {
             Instantiate(Human, gameObject.transform.position, Quaternion.identity);
         }

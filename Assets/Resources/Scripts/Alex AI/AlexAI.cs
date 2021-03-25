@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace AlexAISpace
 {
@@ -8,146 +9,116 @@ namespace AlexAISpace
     public enum STATE
     {
         Idle,
-        RoomChange,
+        Patrol,
         Hunting,
-        HuntingGhost,
-        RoomRoam,
-        SoulDunking,
-        Scanning,
-        Walking,
-    }
-
-    //All the Rooms and hallways
-
-    public enum ROOM
-    {
-        CommonRoom,
-        InnerRoom,
-        BedRoom,
-        Kitchen,
-        DinnerRoom
+        Dunking
     }
 
     public class AlexAI : BaseGhostAI
     {
         //General AI var
-        private float rotationSpeed = 1f;
+
         private GameObject currentHuman;
-        private bool HasMoved;
+        private Vector3 PatrolDestination;
+        public int ResetTimer;
+
+        private bool arrived;
+        private Vector3 NewLocationForAI;
+        public int StopHuntingTimer;
+        public GameObject Cauldren;
+        public int SoulsOnMe;
+
 
         //Statemachine var
-        public List<Room> rooms;
-
-        protected ROOM currentRoom;
-        protected ROOM NewRoom;  
-        private STATE newState;
-        private STATE currentState;
+        private STATE currentState = STATE.Patrol;
 
         //Ability var
-        private ABILITY currentAbility;
+        //private ABILITY currentAbility;
+
 
         // Start is called before the first frame update
         void Start()
         {
             agent.speed = GetSpeed();
-            currentAbility = ABILITY.none;
-            currentRoom = ROOM.InnerRoom;
-            newState = STATE.Idle;
-            HasMoved = false;
+            //currentAbility = ABILITY.none;
+            currentState = STATE.Patrol;
+            arrived = true;
+            NewLocationForAI = new Vector3(0,0,0);
+
         }
 
         // Update is called once per frame
         void Update()
         {
-            //maybe an if(Souls = x) go dunk then an else if
-            if (CheckHumanInfront()) // maybe only check when scouting or whatever so you can ignore them to deposit souls
+            if(SoulsOnMe >= 3)
+                DunkSouls();
+            else if (CheckHumanInfront())
                 ChaseHuman();
-            else if (currentState == STATE.Idle)
+            else if (currentState == STATE.Patrol && arrived == true)//Arrived is to make sure that it does not keep firing 24/7 and cause a huge preformance cost
             {
-                //Start look around
-                StartCoroutine(IdleLookAround());
-                
+                Patrolling();
             }
-
-            if (agent.remainingDistance < 0.1 && HasMoved == true)
+            if(agent.transform.position == NewLocationForAI)
             {
-                currentState = STATE.Idle;
-                HasMoved = false;
-                Debug.Log("I Stopped");
+                arrived = true;
             }
+           
         }
 
-
-        //The State change machine along a random number generator that chooses a random state if the character is idle
-        void ChangeState()
+        private void FixedUpdate()
         {
-            Debug.Log("change state called");
-            newState = ((STATE)Random.Range(1, 2));
-            Debug.Log("The new state is " + newState);
-            currentState = newState;
-            if(currentState == STATE.RoomChange)
+            //This is a reset system to prevent the agent from buggin out if was not able to go to a destination set by Patrolling
+            if (currentState == STATE.Patrol)
             {
-                NewRoom = (ROOM)Random.Range(1, 5);
-                Debug.Log("I am going to reap some souls in " + NewRoom);
-                MovetoPoint(NewRoom);
-                HasMoved = true;
-            }
-        }
-        //if the character is idle look around for a bit
-        private IEnumerator IdleLookAround()
-        {
-            currentState = STATE.Scanning;
-            transform.Rotate(0, rotationSpeed, 0);// this is still being called after
-
-            yield return new WaitForSeconds(1f);
-            transform.Rotate(0, -rotationSpeed, 0);
-
-            yield return new WaitForSeconds(.9f);
-            ChangeState();
-        }
-
-/*        protected void RoamAround()
-        {
-            currentState = STATE.RoomRoam;
-            
-        }*/
-
-
-        //For basic movement 
-        public void MovetoPoint(ROOM roomName)
-        {
-            string name = roomName.ToString();
-
-            foreach (var room in rooms)
-            {
-                if (room.name == name)
+                ResetTimer++;
+                if (NewLocationForAI != agent.transform.position)
                 {
-                    agent.SetDestination(room.GetPos());
-                    StartCoroutine(Wait());
-                    break;
+                    if (ResetTimer >= (6 * 60))
+                    {
+                        arrived = true;
+                        Debug.Log("reseted death");
+                        ResetTimer = 0;
+                    }
+                }
+                else
+                {
+                    //reset the timer if agent is at the location
+                    ResetTimer = 0;
+                    Debug.Log("Not Needed to reset");
                 }
             }
+            else
+            {
+                ResetTimer = 0;
+            }
+            
+        }
+        void Patrolling()
+        { 
+                if (agent.destination == PatrolDestination || PatrolDestination == new Vector3())
+                {
+                    if (NavMesh.SamplePosition(new Vector3(Random.Range(-16, 16), 0, Random.Range(-16, 16)) + transform.position, out NavMeshHit EndLocation, 1.0f, NavMesh.AllAreas))
+                    {
+                        PatrolDestination = EndLocation.position;
+                        agent.destination = PatrolDestination;
+                        NewLocationForAI = PatrolDestination;
+                        Debug.Log("New location added");
+                        arrived = false;
+                    }
+                }
         }
 
-        //Waiting function that I can use for more than 1 purpose if I want to
-        protected IEnumerator Wait()
-        {
-            yield return new WaitForSeconds(1);
-            HasMoved = true;
-        }
 
         //Human Hunter system
         protected bool CheckHumanInfront()
         {
-            //currentState = STATE.Scanning;
 
             Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3);
 
-            foreach (var human in humansNearby)
+            foreach (Collider human in humansNearby)
             {
                 if (human.CompareTag("Human"))
                 {
-                    //Debug.Log("Human nearby");
                     currentHuman = human.gameObject;
                     return true;
                 }
@@ -156,30 +127,43 @@ namespace AlexAISpace
         }
         protected void ChaseHuman()
         {
-            currentState = STATE.Hunting;
-            if (currentHuman != null)
+                currentState = STATE.Hunting;
+                if (currentHuman != null)
+                {
+                    agent.SetDestination(currentHuman.transform.position);
+                }
+            }
+        //Dunking souls
+        protected void DunkSouls()
+        {
+            currentState = STATE.Dunking;
+            agent.SetDestination(Cauldren.transform.position);
+        }
+        //play sound when hitted a human
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.tag == "Human")
             {
-                //Debug.Log("human not nul");
-                Vector3 direction = currentHuman.transform.position - transform.position;
-                direction.Normalize();
+                currentState = STATE.Patrol;
+                arrived = true;
+                SoulsOnMe ++;
 
-                agent.SetDestination(currentHuman.transform.position);
-                //transform.Translate(direction * speed * Time.deltaTime);
-                transform.forward = new Vector3(direction.x, 0, direction.z);
-                //transform.LookAt(currentHuman.transform.position, Vector3.up); 
+
+
+            }
+            //if dunked go back to patrol
+            else if(collision.gameObject.tag == "Cauldron")
+            {
+                if (SoulsOnMe >= 3)
+                {
+                    SoulsOnMe = 0;
+                    currentState = STATE.Patrol;
+                    agent.ResetPath();
+                    arrived = true;
+                }
+
             }
         }
-        //Dunking souls
-        protected void DepositSouls()
-        {
-            //WIP
-        }
 
-
-        //PVP mode (if needed)
-        private void Stealsouls()
-        {
-            currentAbility = ABILITY.SoulSteal;
-        }
     }
 }

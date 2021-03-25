@@ -11,6 +11,7 @@ public class HumanEscapingState : BaseHumanBehaviour
     public float ghostAvoidanceDistance;
     public float speed;
     private NavMeshAgent _navAgent;
+    private Vector3 _destination;
 
     private GameObject escapeDoor;
     
@@ -27,27 +28,52 @@ public class HumanEscapingState : BaseHumanBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     { 
-        escapeDoor = Behaviour.closestDoor;
-       
-       
+        
+
+        if (Behaviour.closestGhost != null)
+        {
+            
+            if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
+            {
+               _destination = calculateDoorOffset(escapeDoor);
+            }
+            else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 3)
+            {
+                _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
+                _destination = _transform.position + _transform.forward.normalized*2;
+                
+                // prevents getting stuck in corners
+                if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1.5f))
+                {
+                    _transform.forward = Vector3.Reflect(_transform.forward, hit.normal);
+                        _destination = _transform.position + _transform.forward.normalized;
+                }
+            }
+
+            if (escapeDoor != null)
+            {
+                if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
+                {
+                    _destination = calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2 ;
+                    animator.SetBool("SeesGhost", false);
+          
+                }
+            }
+
+
+            _navAgent.SetDestination(_destination);
+
+        }
 
       // _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
        //_transform.forward += ghostAdjust;
        
       // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-      if (escapeDoor != null)
-      {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor));
-      }
       
-      
-      if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
-      {
-          _navAgent.SetDestination(calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2) ;
-          animator.SetBool("SeesGhost", false);
-      }
       
     }
+
+   
     
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

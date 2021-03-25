@@ -36,9 +36,6 @@ public class BaseHumanBehaviour : StateMachineBehaviour
                     GameObject hitObject = hit2.collider.gameObject;
                     Debug.DrawLine(self.transform.position, lineTarget, Color.green);
                     
-                    
- 
-                
                     //adds to list 
                     if (objectsInRange != null)
                     {

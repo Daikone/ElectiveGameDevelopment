@@ -41,10 +41,10 @@ public class CameraMovements : MonoBehaviour
 
         if (followMonster)
         {
-            monsterOffset = -monsters[0].forward.normalized * offsetDistance;
+            monsterOffset = -monsters[randNum].forward.normalized * offsetDistance;
             monsterOffset += new Vector3(0f, offsetDistance, 0f);
-            transform.position = monsters[0].position + monsterOffset;
-            transform.LookAt(monsters[0]);
+            transform.position = monsters[randNum].position + monsterOffset;
+            transform.LookAt(monsters[randNum]);
             
             //smoothout camera transitions
             //Debug.Log(monsters[0].rotation.eulerAngles);

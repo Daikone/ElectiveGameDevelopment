@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public Text timer;
     public GameObject human;
     //public bool isDone;
-    private float currentTime;
+    public  float currentTime;
     public GameObject[] currentHumans;
 
     public delegate void spawnHumans();
@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
 
     public string[] playerNames = {"Esmé", "Hani", "Stijn", "Alex", "Matti"};
     public float[] ghostScores = {0, 0, 0, 0, 0};
-    private const float MINHUMANS = 5;
+    
+    public SortedDictionary<string, float> ScoreBoard = new SortedDictionary<string, float>();
+    private const float MINHUMANS = 7;
     private const float MAXTIME = 65;
     private const float MAXPOINTS = 10;
 
@@ -45,6 +47,13 @@ public class GameManager : MonoBehaviour
         {
             OnSpawnHumans?.Invoke();
         }
+        
+        ScoreBoard.Clear();
+        for (int i = 0; i < playerNames.Length; i++)
+        {
+            ScoreBoard.Add(playerNames[i], ghostScores[i]);
+        }
+        currentTime -= Time.deltaTime;
 
     }
 

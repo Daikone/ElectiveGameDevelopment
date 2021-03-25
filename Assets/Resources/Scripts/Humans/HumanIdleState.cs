@@ -32,7 +32,7 @@ public class HumanIdleState : BaseHumanBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _navAgent.ResetPath();
+        //
         
         //Movement
         //adds randomness to direction 
@@ -43,14 +43,16 @@ public class HumanIdleState : BaseHumanBehaviour
         
         
         //Checks for collisions
-        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1))
+        if (Physics.Raycast(_transform.position, _transform.forward.normalized, out var hit, 1.5f))
         {
             _transform.forward = Vector3.Reflect(_transform.forward, hit.normal);
         }
         
         //anti fly away
         _transform.localEulerAngles = new Vector3(0f,_transform.localEulerAngles.y,0f);
-        _transform.position += _transform.forward * (speed * Time.deltaTime);
+
+        _navAgent.SetDestination(_transform.position + _transform.forward.normalized*0.5f);
+       // _transform.position += _transform.forward * (speed * Time.deltaTime);
         
         
         

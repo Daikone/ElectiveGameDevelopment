@@ -1,132 +1,81 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 namespace HaniAISpace
 {
-    public enum STATE
-    {
-        Idle,
-        Hunting,
-        RoomChange,
-        RoomRoam,
-        SoulDeposit,
-        Scanning
-    }
-    
-    public enum ROOM{ MainHall, Hallway1, TopRightRoom}
+    public enum STATE { Idle, Hunting, RoomChange, SoulDeposit } 
+    public enum INTERACTABLE{ None, Ghost, Pickup, Human}
     
     public class HaniAI : BaseGhostAI
     {
-        //constantly in room change state
         
-        public List<Room> rooms;
+        public List<Transform> rooms;
         
-        private float rotationSpeed = 1f;
-        private GameObject currentHuman;
-
         private STATE currentState;
-        private ABILITY currentAbility;
+        private INTERACTABLE Interactable;
         private Vector3 targetRoomPos;
-        private Rigidbody rb;
-        private float distanceToCurrentHuman;
-
+        private GameObject currentChasableObject;
+        private GhostBehaviour gb;
         private int randomNumber;
-
-        // Start is called before the first frame update
+        private float distanceToCurrentHuman;
+        
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            agent.speed = GetSpeed();
-            MovetoPoint(ROOM.Hallway1);
-            currentAbility = ABILITY.none;
-            
-
-            //rooms = new List<Room>();
+            gb = gameObject.GetComponent<GhostBehaviour>();
+            currentState = STATE.Idle;
         }
 
-       // Update is called once per frame
        void Update()
        {
-           if(rb.velocity.magnitude < .7f) //change state after colliding with human or getting a point maybe
-               Invoke("ChangeState", 2f);
-               //Debug.Log("notmoving");
-           
+           CheckState();
            Debug.Log("HaniAI currentState = " + currentState);
-           //Debug.Log(rb.velocity.magnitude);
-           if (currentHuman != null)
-           {
-               distanceToCurrentHuman = (currentHuman.transform.position - transform.position).magnitude;
-               //Debug.Log(distanceToCurrentHuman);
-               if (distanceToCurrentHuman >= 3f)
-                   currentState = STATE.Idle;
-               /*else if (distanceToCurrentHuman <= 0.1f)
-                   currentState = STATE.Idle;*/
-           }
-
-           
-
-           if (Vector3.Distance(transform.position, targetRoomPos)  <= .3f)
-           {
-               currentState = STATE.Idle;
-               targetRoomPos = new Vector3(0, 0, 0);
-           }
-           
-           Debug.Log(targetRoomPos);
-
-           /*if (carryingSouls >= 3)
-               DepositSouls();*/
-           if ( CheckHumanInfront() && currentState != STATE.SoulDeposit) // maybe only check when scouting or whatever so you can ignore them to deposit souls
-               ChaseHuman();
-           else if (currentState == STATE.Idle)
-           {
-               ChangeState();
-               //InvokeRepeating("ChangeState", 0f, 5f); // being called multiple times
-               //StartCoroutine(IdleLookAround());
-           }
-
-           
        }
 
-        void ChangeState()
+        private void CheckState()
         {
-            Debug.Log("change state called");
-            int randomNumber = Random.Range(2, 3);
-
-            switch (randomNumber)
+            if (carryingSouls >= 1)
+                StartCoroutine(DepositSouls());
+            if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
             {
-                case 1: StartCoroutine(RoamAround());Debug.Log("Roam");
-                    break;
-                case 2: MoveToRandomPoint();Debug.Log("changeRoom");
-                    break;
-                /*case 3: currentState = STATE.Idle;Debug.Log("idle");
-                    break;*/
+                switch (CheckObjectsInfront())
+                {
+                    case INTERACTABLE.Human:
+                        ChaseObject();
+                        break;
+                
+                    case INTERACTABLE.Pickup: 
+                        ChaseObject();
+                        break;
+                    /*case INTERACTABLE.Ghost:
+                        break;*/
+                }
             }
-        }
-        
-        private IEnumerator IdleLookAround()
-        {
-            transform.Rotate(0, rotationSpeed, 0);// this is still being called after
-
-            yield return new WaitForSeconds(1f);
-            transform.Rotate(0, -rotationSpeed, 0);
-
-            yield return new WaitForSeconds(.1f);
-            currentState = STATE.Hunting;// change to smething else
-            //ChangeState(); 
-        }
-
-        IEnumerator RoamAround()
-        {
-            currentState = STATE.RoomRoam;
             
-            //GetComponent<Rigidbody>().MovePosition(transform.forward + Vector3.forward); // maybe add speed
-            agent.SetDestination(rooms[0].GetPos());
-
-            yield return new WaitForSeconds(3f);
-
-            currentState = STATE.Idle;
+            switch (currentState)
+            {
+                case STATE.SoulDeposit:
+                    break;
+            
+                case STATE.Hunting:
+                    if (currentChasableObject == null)
+                        currentState = STATE.Idle;
+                    else if (currentChasableObject != null && Vector3.Distance(transform.position, currentChasableObject.transform.position) >= 10f)
+                        currentChasableObject = null;
+                    break;
+            
+                case STATE.RoomChange:
+                    if (Vector3.Distance(transform.position, targetRoomPos) <= 1f)
+                        currentState = STATE.Idle;
+                    break;
+            
+                case STATE.Idle: MoveToRandomPoint(); break;
+            }
         }
 
         private void MoveToRandomPoint()
@@ -134,155 +83,83 @@ namespace HaniAISpace
             
             if(currentState == STATE.Idle)
               randomNumber = Random.Range(0, rooms.Count);
-            currentState = STATE.RoomChange;
-            agent.SetDestination(rooms[randomNumber].GetPos());
-            targetRoomPos = rooms[randomNumber].GetPos();
             
-            //Debug.Log(randomNumber);
+            currentState = STATE.RoomChange;
+            targetRoomPos = rooms[randomNumber].position;
+            agent.SetDestination(targetRoomPos);
         }
         
-        private void MovetoPoint(ROOM roomName)
+        private INTERACTABLE CheckObjectsInfront()
         {
-            currentState = STATE.RoomChange;
+            Collider[] objNearby = Physics.OverlapSphere(transform.position, 5f, LayerMask.GetMask("Humans", "Pickups"));
+
+            GameObject nearestObject = CheckClosestObject(objNearby);
             
-            string name = roomName.ToString();
+            if (nearestObject != null)
+            {
+                if (gb.hasPickup == false && gb.isPickupActive == false && nearestObject.CompareTag("Pickup"))
+                {
+                    currentChasableObject = nearestObject;
+                    return INTERACTABLE.Pickup;
+                }
             
-            foreach (var room in rooms)
-            {
-                if (room.name == name)
+                if (nearestObject.CompareTag("Human"))
                 {
-                    agent.SetDestination(room.GetPos());
-                    targetRoomPos = room.GetPos();
-                    break;
+                    currentChasableObject = nearestObject;
+                    return INTERACTABLE.Human; 
                 }
-            }
-            //Maybe needs a way to debug if the room exists
-        }
-        
-        protected bool CheckHumanInfront()
-        {
-            //currentState = STATE.Scanning;
-
-            List<GameObject> nearbyHumans = CheckCloseObjectsInSight(gameObject, 2f, LayerMask.GetMask("Humans", "Walls"));
-
-            /*Collider[] nearbyObj = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Humans", "Walls"));
-
-            List<Collider> near = nearbyObj.ToList();
-
-            List<GameObject> gmObjs = new List<GameObject>();
-
-            foreach (var obj in near)
-            {
-                gmObjs.Add(obj.gameObject);
-            }*/
-
-            if (nearbyHumans.Count > 0)
-            {
-                GameObject closeObject = ClosestObjectInList(gameObject, nearbyHumans);
-                if (closeObject.CompareTag("Human"))
+                
+                /*if (nearestObject.CompareTag("Ghost"))
                 {
-                    currentHuman = closeObject;
-                    return true;
-                }
+                    currentHuman = nearestObject;
+                    return INTERACTABLE.Ghost;
+                }*/
+                    
             }
-            return false;
 
-            /*Collider[] humansNearby = Physics.OverlapSphere(transform.position, 3); // variable instead of hardcode
-        
-            //if(humansNearby.Contains<GameObject>(gameObject))
-            foreach (var human in humansNearby)
-            {
-                if (human.CompareTag("Human"))
-                {
-                    //Debug.Log("Human nearby");
-                    currentHuman = human.gameObject;
-                    return true;
-                }
-            }
-            return false;*/
+            
 
-            //check infron instead of around so it doesn't check through walls
-            //check for ghosts as well?
-
+            return INTERACTABLE.None;
         }    
 
-        protected void DepositSouls()
+        IEnumerator DepositSouls()
         {
             currentState = STATE.SoulDeposit;
-            MovetoPoint(ROOM.MainHall);
+            targetRoomPos = rooms[0].position;
+            agent.SetDestination(targetRoomPos);
+            //reset to idle
+            yield return new WaitForSeconds(10f);
+            currentState = STATE.Idle;
         }
 
-        protected void ChaseHuman()
+        protected void ChaseObject()
         {
             currentState = STATE.Hunting;
 
-            if (currentHuman != null)
+            if (currentChasableObject != null)
             {
-                Vector3 direction = currentHuman.transform.position - transform.position;
-                direction.Normalize();
-
-                agent.SetDestination(currentHuman.transform.position);
-                //transform.Translate(direction * speed * Time.deltaTime);
-                transform.forward = new Vector3(direction.x, 0, direction.z);
-                //transform.LookAt(currentHuman.transform.position, Vector3.up); 
+                agent.SetDestination(currentChasableObject.transform.position);
             }
-            
-            //smooth rotate to target
-            //stop chasing if the target goes too far
         }
 
-        private void Stealsouls()
+        private GameObject CheckClosestObject(Collider[] objList)
         {
-            currentAbility = ABILITY.SoulSteal;
-            //ability that disappears after one use
+            GameObject closeObj;
 
-            //collide with ghost to steal thier soul (animation with sound)
-            //if other ghost's current power up is GhostSteal
-            //nothing happens so go back to idling or whatever you were doing do something else
-            //else
-            //gain half their soul and change current power up to none
+            if (objList.Length > 0)
+            {
+                closeObj = objList[0].gameObject;
+                foreach (var obj in objList)
+                {
+                    if (Vector3.Distance(transform.position, obj.transform.position) <
+                        Vector3.Distance(transform.position, closeObj.transform.position))
+                        closeObj = obj.gameObject;
+                }
+                
+                return closeObj;
+            }
 
-            //i GUESS YOU CAN ONLY HAVE 1 power up at a time
+            return null;
         }
-
-        /*void OnCollisionEnter(Collision collider)
-        {
-            if (collider.collider.CompareTag("Ghost"))
-            {
-                if (currentAbility == ABILITY.SoulSteal)
-                {
-                    var otherAI = collider.collider.GetComponent<HaniAI>(); // current ability will be in the baseghostAI
-
-                    if (otherAI.currentAbility != ABILITY.SoulSteal)
-                    {
-                        carryingSouls += otherAI.carryingSouls; // Add to yor souls and make a sound with mabe animation
-                        ChangeState(); // Run away or do something else
-                    }
-                    else
-                        ChangeState(); // Do something else if the other has the same ability
-                }
-            }
-        }*/
-
-        //CheckCloset()
-    
-        //protected PowerUp()*/
-        
-        /*if (other.collider.CompareTag("Ghost"))
-        {
-            if (currentAbility == ABILITY.SoulSteal)
-            {
-                var otherAI = other.collider.GetComponent<GhostBehaviour>(); // current ability will be in the baseghostAI
-
-                if (otherAI.currentAbility != ABILITY.SoulSteal)
-                {
-                    carryingSouls += otherAI.carryingSouls; // Add to yor souls and make a sound with mabe animation
-                    //ChangeState(); // Run away or do something else
-                }
-                //else
-                //ChangeState(); // Do something else if the other has the same ability
-            }
-        }*/
-    
     }
 }
