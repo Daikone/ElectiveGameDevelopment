@@ -31,15 +31,7 @@ namespace Resources.Scripts.Matti_AI
         public override void LogicUpdate()
         {
             
-            if (baseAI.HumansInSight.Count > 0)
-            {
-                stateMachine.ChangeState(baseAI._chaseState);
-            }
-             else if (baseAI.behaviour.carryingSouls >= 3)
-            {
-                Debug.Log("i want to save");
-                stateMachine.ChangeState(baseAI._saveSoulsState);
-            }
+            
 
 
 
@@ -50,6 +42,16 @@ namespace Resources.Scripts.Matti_AI
             else
             {
                 baseAI.agent.SetDestination(baseAI.ClosestDoorPos);
+            }
+            
+            
+            if (baseAI.HumansInSight.Count > 0)
+            {
+                stateMachine.ChangeState(baseAI._chaseState);
+            }else if (baseAI.behaviour.carryingSouls >= 3)
+            {
+                Debug.Log("i want to save");
+                stateMachine.ChangeState(baseAI._saveSoulsState);
             }
 
             
