@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UIScoreUpdate : MonoBehaviour
 {
     public GameManager gameManager;
+    public GhostBehaviour[] ghostScores;
 
     public Text AlexScore;
     public Text AlexTotal;
@@ -38,6 +39,11 @@ public class UIScoreUpdate : MonoBehaviour
         MattiTotal.text = gameManager.ghostScores[4].ToString();
         HaniTotal.text = gameManager.ghostScores[1].ToString();
 
-        //AlexTotal.text = gameManager.
+        AlexScore.text = ghostScores[0].getSouls().ToString();
+        StijnScore.text = ghostScores[1].getSouls().ToString();
+        EsméScore.text = ghostScores[2].getSouls().ToString();
+        MattiScore.text = ghostScores[3].getSouls().ToString();
+        HaniScore.text = ghostScores[4].getSouls().ToString();
+
     }
 }
