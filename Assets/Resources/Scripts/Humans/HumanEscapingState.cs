@@ -32,11 +32,12 @@ public class HumanEscapingState : BaseHumanBehaviour
 
         if (Behaviour.closestGhost != null)
         {
-            
+            // if there is a ghost and a door in sight the destination is set to the closest door
             if (escapeDoor != null&& Behaviour.DoorsInSight.Count > 0 && Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) > 2)
             {
                _destination = calculateDoorOffset(escapeDoor);
             }
+            // if there is no door insight and the distance to the ghost is less than three, the ghost runs in the opposite direction of the ghost 
             else if(Vector3.Distance(_transform.position, Behaviour.closestGhost.transform.position) <= 3)
             {
                 _transform.forward = _transform.position - Behaviour.closestGhost.transform.position;
@@ -52,6 +53,7 @@ public class HumanEscapingState : BaseHumanBehaviour
 
             if (escapeDoor != null)
             {
+                // makes the human go through the door if close enough 
                 if(Vector3.Distance(_transform.position, calculateDoorOffset(escapeDoor)) <= 1)
                 {
                     _destination = calculateDoorOffset(escapeDoor) + _transform.forward.normalized * 2 ;
@@ -65,32 +67,7 @@ public class HumanEscapingState : BaseHumanBehaviour
 
         }
 
-      // _transform.forward = calculateDoorOffset(escapeDoor) - _transform.position;
-       //_transform.forward += ghostAdjust;
-       
-      // _transform.position += _transform.forward.normalized * (speed * Time.deltaTime);
-      
-      
+
     }
 
-   
-    
-
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }

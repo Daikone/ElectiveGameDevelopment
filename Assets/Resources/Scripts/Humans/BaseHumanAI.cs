@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class BaseHumanBehaviour : StateMachineBehaviour
 {
-    
+    /// Checks for objects in sight within a certain radius, returns a list with these GameObjects 
+    /// <param name="self">GameObject from which the function should be executed </param>
+    /// <param name="radius">Radius in which to check </param>
+    /// <param name="layerMask">Layermask to only find objects on a certain layer, for example: doors </param>
+    /// <param name="ignoringGhostSphere">Should the linecast ignore the sphere around each ghost?</param>
     protected List<GameObject> CheckCloseObjectsInSight(GameObject self, float radius, LayerMask layerMask, bool ignoringGhostSphere)
     {
 
@@ -83,6 +87,13 @@ public class BaseHumanBehaviour : StateMachineBehaviour
         return objectsInRange;
     }
 
+    
+    /// <summary>
+    /// Checks for the clostest object in a list
+    /// </summary>
+    /// <param name="self">GameObject form where the function is called </param>
+    /// <param name="list"> List in which to look for the object </param>
+    /// <returns>Closest Object </returns>
     protected GameObject ClosestObjectInList(GameObject self, List<GameObject> list)
     {
         if(list.Count > 0){}
@@ -103,6 +114,12 @@ public class BaseHumanBehaviour : StateMachineBehaviour
 
     }
 
+    
+    /// <summary>
+    /// Fixes the weird pivot points of doors in our assets and returns the center of the door 
+    /// </summary>
+    /// <param name="door">The door of which you want to calculate the correct position </param>
+    /// <returns>The center position of the door instead of the pivot</returns>
     protected Vector3 calculateDoorOffset( GameObject door)
     {
         Vector3 doorOffset = (door.transform.position + new Vector3(0, 1, 0)) + door.transform.right.normalized;

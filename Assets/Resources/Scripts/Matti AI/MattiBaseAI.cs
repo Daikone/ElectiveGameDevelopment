@@ -65,6 +65,7 @@ namespace Resources.Scripts.Matti_AI
             
             //checking for humans 
             HumansInSight = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
+            //Getting the closest human
             if (HumansInSight.Count > 0)
             {
                 closestHuman = ClosestObjectInList(gameObject, HumansInSight);
@@ -81,6 +82,7 @@ namespace Resources.Scripts.Matti_AI
             CloseDoors = CheckCloseObjects(gameObject, 20f, DoorLayerCheck);
             ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
 
+            // adds the already used doors to a queue and removes them from the list of close doors, which makes the ghost patrol in circles around the map
             if (Vector3.Distance(transform.position, calculateDoorOffset(ClosestDoor)) <= 1f)
             {
                 if (!PreviousDoors.Contains(ClosestDoor))
@@ -97,12 +99,12 @@ namespace Resources.Scripts.Matti_AI
             {
                 CloseDoors.Remove(door);
             }
-
             if (CloseDoors.Count > 0)
             {
                 ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
             }
             ClosestDoorPos = calculateDoorOffset(ClosestDoor);
+            
             
             
             // checking for pickUps 
@@ -111,8 +113,6 @@ namespace Resources.Scripts.Matti_AI
             {
                 closestPickUp = ClosestObjectInList(gameObject,PickUpsInSight );
             }
-            
-            
             
             
             
