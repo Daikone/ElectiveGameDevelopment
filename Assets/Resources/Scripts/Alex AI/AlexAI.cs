@@ -162,7 +162,9 @@ namespace AlexAISpace
 
 
             }
-            //if dunked go back to patrol. The reason for this course of action is that I was unable to get the code from ghostbehavior script that is why I made my own
+            //if dunked go back to patrol. The reason for this course of action
+            //is that I was unable to get the code from ghostbehavior script
+            //that is why I made my own
             //(it does not intervere with the game)
             else if(collision.gameObject.tag == "Cauldron")
             {
