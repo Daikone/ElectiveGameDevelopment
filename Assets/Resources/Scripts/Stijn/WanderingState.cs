@@ -13,10 +13,12 @@ namespace Resources.Scripts.Stijn
 
         public override void Enter(StijnGhost owner)
         {
+            Debug.Log("zombie is wandering");
             timer = 0;
 
             newPos = RandomNavSphere(owner.transform.position, 10, -1);
             owner.navMeshAgent.SetDestination(newPos);
+            
         }
 
 
