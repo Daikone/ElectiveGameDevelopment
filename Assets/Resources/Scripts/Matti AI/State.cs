@@ -20,26 +20,16 @@ namespace Resources.Scripts.Matti_AI
 
         }
 
-        
-        
-        
-        public virtual void Enter()
-        {
-            
-        }
 
-        public virtual void HandleInput()
-        {
+        public abstract void Enter();
+       
 
-        }
 
         public abstract void LogicUpdate();
-        
 
-        public virtual void Exit()
-        {
 
-        }
+        public abstract void Exit();
+
 
     }
 }

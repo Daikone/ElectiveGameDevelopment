@@ -30,13 +30,12 @@ namespace Resources.Scripts.Matti_AI
         {
             timeInState += Time.deltaTime;
             
-            
-            
+            //goes for the closest human
             if (baseAI.HumansInSight.Count > 0)
             {
                 baseAI.agent.SetDestination(baseAI.closestHuman.transform.position);
             }
-            //going to the last position of seen human
+            //going to the last position of seen human for one second
             else if (baseAI.HumansInSight.Count == 0)
             {
                 if (!_isGoingForPos)
@@ -44,7 +43,6 @@ namespace Resources.Scripts.Matti_AI
                     _timeWhenOutOfSight = timeInState;
                     _isGoingForPos = true;
                 }
-
                 if (timeInState - _timeWhenOutOfSight <= 1)
                 {
                     baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
@@ -55,13 +53,18 @@ namespace Resources.Scripts.Matti_AI
                     _timeWhenOutOfSight = 0;
                 }
             }
+            //Switching back to idle if human remains out of sight
             if(baseAI.HumansInSight.Count== 0 && !_isGoingForPos )
             {
                 stateMachine.ChangeState(baseAI._idleState);
             }
             
         }
-        
+
+        public override void Exit()
+        {
+            
+        }
     }
 }
 

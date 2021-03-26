@@ -25,16 +25,20 @@ namespace Resources.Scripts.Matti_AI
         public override void LogicUpdate()
         {
 
+            //changes state back if the souls are deposited 
             if (baseAI.behaviour.carryingSouls == 0)
             {
                 stateMachine.ChangeState(baseAI._idleState);
-            }else if (baseAI.closestHuman != null)
+            }
+            // still hunts a human if he is closer than fice
+            else if (baseAI.closestHuman != null)
             {
                 if (Vector3.Distance(baseAI.transform.position, baseAI.closestHuman.transform.position) <= 5)
                 {
                     _destination = baseAI.closestHuman.transform.position;
                 }
             }
+            //goes to the cauldron
             else
             {
                 _destination = baseAI.cauldron.transform.position;
@@ -42,8 +46,12 @@ namespace Resources.Scripts.Matti_AI
 
             baseAI.agent.SetDestination(_destination);
         }
-
         
+
+        public override void Exit()
+        {
+            
+        }
     }
 }
 

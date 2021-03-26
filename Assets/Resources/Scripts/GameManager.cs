@@ -43,11 +43,13 @@ public class GameManager : MonoBehaviour
         
         //expensive method but it was the fastest way
         currentHumans = GameObject.FindGameObjectsWithTag("Human");
+        //spawns humans when below minhumans
         if (currentHumans.Length < MINHUMANS)
         {
             OnSpawnHumans?.Invoke();
         }
         
+        //combines names with scores in a dictionary
         ScoreBoard.Clear();
         for (int i = 0; i < playerNames.Length; i++)
         {

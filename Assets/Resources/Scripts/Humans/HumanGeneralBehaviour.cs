@@ -30,11 +30,12 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Detecting
+        //Detecting doors and ghosts 
         DoorsInSight = CheckCloseObjectsInSight(animator.gameObject,20f, DoorLayerCheck, false );
         GhostsInSight = CheckCloseObjectsInSight(animator.gameObject,GhostSpottingDistance, GhostLayerCheck, true);
-        //Debug.Log(GhostsInSight.Count);
         
+        
+        // Sets the closest door 
         if (DoorsInSight != null && DoorsInSight.Count > 0)
         {
             if (DoorsInSight.Count > 0)
@@ -44,7 +45,8 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
             
             Debug.DrawLine(_transform.position, calculateDoorOffset(closestDoor), Color.blue);
         }
-
+    
+        //Sets the closest ghost
         if (GhostsInSight.Count > 0)
         {
             closestGhost = ClosestObjectInList(animator.gameObject, GhostsInSight);
@@ -55,8 +57,8 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
             closestGhost = null;
         }
         
-        //Behaviour Switches
-        //Triggers behaviours
+        
+        //Switches states if ghost is in sight
         if (GhostsInSight.Count > 0 && closestDoor != null)
         {
             animator.SetBool("SeesGhost", true);
@@ -67,21 +69,4 @@ public class HumanGeneralBehaviour : BaseHumanBehaviour
         }
     }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }

@@ -39,6 +39,7 @@ public class GameOverScreen : MonoBehaviour
             manualGameOver = false;
         }
 
+        // blends in the game over screen 
         if (isblending && _canvasGroup.alpha < 1)
         {
             _canvasGroup.alpha += Time.deltaTime*0.9f;
@@ -46,7 +47,6 @@ public class GameOverScreen : MonoBehaviour
             {
                 GetComponent<AudioSource>().Play();
             }
-            
         }
 
         if (_canvasGroup.alpha >= 1)
@@ -74,6 +74,8 @@ public class GameOverScreen : MonoBehaviour
             valueCount++;
         }
 
+        
+        // makes the three top players show up in the game over screen 
         for (int i = 0; i < winningNames.Length; i++)
         {
             KeyValuePair<string, float> pair = new KeyValuePair<string, float>();
@@ -81,10 +83,7 @@ public class GameOverScreen : MonoBehaviour
             winningNames[i].text = pair.Key;
             winningScores[i].text = pair.Value.ToString();
         }
-
         isblending = true;
-
-
     }
 
     void stopGame()
