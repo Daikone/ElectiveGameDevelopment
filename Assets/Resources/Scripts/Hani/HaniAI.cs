@@ -23,7 +23,6 @@ namespace HaniAISpace
         private GameObject currentChasableObject;
         private GhostBehaviour gb;
         private int randomNumber;
-        private float distanceToCurrentHuman;
         
         void Start()
         {
@@ -40,28 +39,10 @@ namespace HaniAISpace
 
         private void CheckState()
         {
-            if (carryingSouls >= 2)
+            if (gb.getSouls() >= 3)
                 DepositSouls();
-            else if (currentState != STATE.SoulDeposit || currentState != STATE.Hunting)
-            {
-                switch (CheckObjectsInfront())
-                {
-                    case INTERACTABLE.Human:
-                        RaycastHit hit;
-                        if (!Physics.Linecast(transform.position, currentChasableObject.transform.position, out hit,
-                            LayerMask.GetMask("Walls")))
-                            ChaseObject();
-                        else
-                            currentState = STATE.Idle;
-                        break;
-                
-                    case INTERACTABLE.Pickup: 
-                        ChaseObject();
-                        break;
-                    /*case INTERACTABLE.Ghost:
-                        break;*/
-                }
-            }
+            else
+                CheckCloseInteractable();
             
             switch (currentState)
             {
@@ -116,16 +97,8 @@ namespace HaniAISpace
                     currentChasableObject = nearestObject;
                     return INTERACTABLE.Human; 
                 }
-                
-                /*if (nearestObject.CompareTag("Ghost"))
-                {
-                    currentHuman = nearestObject;
-                    return INTERACTABLE.Ghost;
-                }*/
                     
             }
-            
-            //Raycast check
 
             
 
@@ -165,6 +138,25 @@ namespace HaniAISpace
             }
 
             return null;
+        }
+
+        private void CheckCloseInteractable()
+        {
+            switch (CheckObjectsInfront())
+            {
+                case INTERACTABLE.Human:
+                    RaycastHit hit;
+                    if (!Physics.Linecast(transform.position, currentChasableObject.transform.position, out hit,
+                        LayerMask.GetMask("Walls")))
+                        ChaseObject();
+                    else
+                        currentState = STATE.Idle;
+                    break;
+                
+                case INTERACTABLE.Pickup: 
+                    ChaseObject();
+                    break;
+            }
         }
     }
 }
