@@ -47,6 +47,7 @@ namespace Resources.Scripts.Matti_AI
 
         private void Awake()
         {
+            // Is this scalable? What if you get 10 more states? Maybe store a State Array or Dictionary with an Enum as a key (cast to int for Array index)
             _stateMachine = new StateMachine(gameObject);
             _idleState = new IdleState(_stateMachine);
             _chaseState = new ChaseState(_stateMachine);
@@ -54,6 +55,7 @@ namespace Resources.Scripts.Matti_AI
             _stateMachine.Initialize(_idleState);
 
             behaviour = GetComponent<GhostBehaviour>();
+            // Perhaps this could've been stored in a central location so that only one object has to find it
             cauldron = GameObject.Find("Cauldron");
         }
 
@@ -61,10 +63,11 @@ namespace Resources.Scripts.Matti_AI
         void Update()
         {
             carryingSouls = behaviour.carryingSouls;
-            
-            
-            //checking for humans 
-            HumansInSight = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
+
+
+			// 15? Arbitrary magic number
+			//checking for humans 
+			HumansInSight = CheckCloseObjectsInSight(gameObject, 15, HumanLayerCheck);
             //Getting the closest human
             if (HumansInSight.Count > 0)
             {
@@ -90,6 +93,7 @@ namespace Resources.Scripts.Matti_AI
                     PreviousDoors.Enqueue(ClosestDoor);
                 }
                 
+                // 4? Arbitrary magic number
                 if (PreviousDoors.Count >= 4)
                 {
                      PreviousDoors.Dequeue();
@@ -104,11 +108,12 @@ namespace Resources.Scripts.Matti_AI
                 ClosestDoor = ClosestObjectInList(gameObject, CloseDoors);
             }
             ClosestDoorPos = calculateDoorOffset(ClosestDoor);
-            
-            
-            
-            // checking for pickUps 
-            PickUpsInSight = CheckCloseObjectsInSight(gameObject, 10, PickUpLayerCheck);
+
+
+
+			// checking for pickUps 
+			// 10? Arbitrary magic number
+			PickUpsInSight = CheckCloseObjectsInSight(gameObject, 10, PickUpLayerCheck);
             if (PickUpsInSight.Count > 0)
             {
                 closestPickUp = ClosestObjectInList(gameObject,PickUpsInSight );
@@ -117,6 +122,8 @@ namespace Resources.Scripts.Matti_AI
             
             
             _stateMachine.CurrentState.LogicUpdate();
+            // Why clear them? Why not keep everything in a radius around the player and check if they're in the frustum?
+            // Vector3.Dot(forward, TARGETDIRECTION)
             HumansInSight.Clear();
 
             

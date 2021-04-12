@@ -16,6 +16,7 @@ public class KillParticle : MonoBehaviour
     void Start()
     {
        timer = 0;
+    // Destroy(gameObject, 10.f) -- Destroys after 10 seconds
     }
     private void Update()
     {

@@ -12,12 +12,14 @@ public class EsmeGhostAi : MonoBehaviour
     private Vector3 patrolPosition;
     private Vector3 cauldronPosition;
     private Vector3 eyesPosition;
+    // Why are you storing the colliders and not let's say, the transforms?
     private List<Collider> OthersColliders = new List<Collider>();
     private GhostBehaviour ghostBehaviour;
     private NavMeshAgent navMeshAgent;
 
     [SerializeField] public bool ShowDebugLines;
 
+    // is it possible to get half a soul? (Is it referenced in Engine?)
     [SerializeField] private float souls;
 
     void Start ()
@@ -39,6 +41,8 @@ public class EsmeGhostAi : MonoBehaviour
         detectingOthersColliders();
         selectGhostState();
     
+        // This feels superfluous, maybe you can have an eventhandler or UnityAction where you subcribe your functions to. Code is then called in the class that has the EventHandlers
+        // In larger projects these kind of switch cases can lead to giant switch cases.
         switch (_state)
         {
             case EState.patrolling:

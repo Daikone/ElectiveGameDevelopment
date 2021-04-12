@@ -16,20 +16,24 @@ namespace Resources.Scripts.Matti_AI
             owner = ow;
         }
         
+        // Does it need this? You can just ChangeState in the owner
+        // You do need to check for current state if(CurrentState) or CurrentState?.Exit();
         public void Initialize(State startingState)
         {
             CurrentState = startingState;
             startingState.Enter();
-            
         }
 
         public void ChangeState(State newState)
         {
-            CurrentState.Exit();
+            // This is a null propagation check
+            CurrentState?.Exit();
 
             CurrentState = newState;
-            newState.Enter();
-        }
+            // What happens if newState is null?
+            // newState?.Enter(); <-- this would fix it
+			newState.Enter();
+		}
     }
     
 }

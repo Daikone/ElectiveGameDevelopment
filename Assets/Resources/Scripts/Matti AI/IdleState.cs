@@ -47,8 +47,9 @@ namespace Resources.Scripts.Matti_AI
             {
                 stateMachine.ChangeState(baseAI._chaseState);
             }
-            // changes to savingSouls state
-            else if (baseAI.behaviour.carryingSouls >= 3)
+			// changes to savingSouls state
+			// 3? Arbitrary magic number
+			else if (baseAI.behaviour.carryingSouls >= 3)
             {
                 //Debug.Log("i want to save");
                 stateMachine.ChangeState(baseAI._saveSoulsState);

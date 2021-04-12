@@ -8,12 +8,15 @@ namespace Resources.Scripts.Stijn
 {
     public class StijnGhost : BaseGhostAI
     {
+        // There is a navmesh agent in the base ghost, why did you need a seperate one?
         public NavMeshAgent navMeshAgent;
 
         public StijnStateMachine stateMachine;
         public WanderingState wandering;
         public ChasingState chasing;
 
+        // Is there any particular reason why this is public? Look up encapsulation (you can achieve it by having a public get and a private set)
+        // Getters and setters are also not visible in Unity Editor
         [HideInInspector] public List<GameObject> HumansVisible = new List<GameObject>();
         [HideInInspector] public GameObject nearbyHuman;
         public LayerMask HumanLayerCheck;

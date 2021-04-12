@@ -26,6 +26,7 @@ public class CameraMovements : MonoBehaviour
         //StartCoroutine(FocusMonster());
 
         //custom control with Keycodes
+        // Were you manually controlling the camera during the demo?
         if (Input.GetKeyDown(KeyCode.O))
         {
             followMonster = false;
@@ -56,6 +57,7 @@ public class CameraMovements : MonoBehaviour
     void CameraChange(){
         randomNumber = Random.Range(0, monsters.Length + 1);
 
+        // Could've used a round-robin system where you ensure all monsters are viewed instead of randomizing it
         if(randomNumber == monsters.Length)
             transform.position = overviewPosition;
         else

@@ -10,6 +10,8 @@ namespace Resources.Scripts.Matti_AI
         {
             stateMachine = sm;
             owner = sm.owner;
+            // This is exactly why I think you should send the owner to your functions and cast that to your object (if you're not using generics)
+            // GetComponent is not THAT light and you don't really need to in this case
             baseAI = sm.owner.GetComponent<MattiBaseAI>();
             
         }
@@ -43,7 +45,7 @@ namespace Resources.Scripts.Matti_AI
                     _timeWhenOutOfSight = timeInState;
                     _isGoingForPos = true;
                 }
-                if (timeInState - _timeWhenOutOfSight <= 1)
+                if (timeInState - _timeWhenOutOfSight <= 1) // arbitrary number
                 {
                     baseAI.agent.SetDestination(baseAI.closestHumanLastPos);
                 }
@@ -61,6 +63,7 @@ namespace Resources.Scripts.Matti_AI
             
         }
 
+        // Empty function, do you need it?
         public override void Exit()
         {
             

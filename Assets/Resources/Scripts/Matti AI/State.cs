@@ -20,7 +20,9 @@ namespace Resources.Scripts.Matti_AI
 
         }
 
-
+        // I would've sent the owner of the StateMachine to the enter, LogicUpdate and Exit
+        // That would mean you can have some of the magic numbers as variables in the owner.
+        // Thus improving scalability and adaptability
         public abstract void Enter();
        
 

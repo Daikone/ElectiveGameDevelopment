@@ -55,7 +55,8 @@ namespace AlexAISpace
         // Update is called once per frame
         void Update()
         {
-            
+            // I'm pretty sure you knew, but what happens when three of the four cases are true?
+            // If you didn't know why: first true has priority. It looks like this was the general idea however.
             if(SoulsOnMe >= 3)
                 DunkSouls();
             else if (CheckHumanInfront())

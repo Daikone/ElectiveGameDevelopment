@@ -147,12 +147,15 @@ namespace HaniAISpace
                 agent.SetDestination(currentChasableObject.transform.position);
         }
 
+        // Don't think you actually need a list of colliders for this
         private GameObject CheckClosestObject(Collider[] objList)
         {
             GameObject closeObj;
 
+            // What if there's only one object in there? 
             if (objList.Length > 0)
             {
+                // You can also use a lambda predicate to order the array (use LINQ to .ToList it first) and then select the first one
                 closeObj = objList[0].gameObject;
                 foreach (var obj in objList)
                 {
